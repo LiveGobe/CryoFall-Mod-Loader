@@ -43,6 +43,16 @@ const main = () => {
 app.whenReady().then(() => {
     ipcMain.handle("config:load", () => config)
 
+    ipcMain.handle("config:save", (_, conf) => {
+        try {
+            fs.writeFileSync(path.join(__dirname, "config.json"), conf);
+        } catch (e) {
+            return { success: false, error: e.toString() }
+        }
+
+        return { success: true }
+    })
+
     ipcMain.handle("config:getModsData", async (_, mode) => {
         const parser = new XMLParser()
         const zip = new jszip()
