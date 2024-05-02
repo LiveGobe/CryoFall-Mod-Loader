@@ -2,13 +2,26 @@
 * {
     box-sizing: border-box;
 }
+body,
+html {
+    margin: 0;
+    padding: 0;
+}
 
 .main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    height: 4rem;
+    padding: 0 1rem;
     gap: 2rem;
+    background: whitesmoke;
+    box-shadow: 0 0 .5rem 0 rgba(0, 0, 0, 0.4);
+    z-index: 1;
 
     & .actions {
         display: flex;
@@ -17,16 +30,28 @@
     }
 }
 
+.main-content {
+    margin-top: 5rem;
+    padding: 0 1rem;
+    min-height: calc(100vh - 5rem);
+    position: relative;
+    padding-bottom: 6rem;
+}
 #folder-path {
     width: 90%;
 }
 
 .main-footer {
-    position: fixed;
+    display: flex;
+    place-content: center;
+    place-items: center;
+    position: absolute;
+    height: 4rem;
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
+    background: color-mix(in srgb, black 10%, white 100%);
 }
 
 .mods-section {
@@ -155,7 +180,8 @@
     }
 }
 
-button {
+button,
+.button {
     all: unset;
     height: 2.5rem;
     padding: 0 1rem;
@@ -186,6 +212,7 @@ button {
     &:disabled,
     &[disabled] {
         background: color-mix(in srgb, grey 20%, whitesmoke);
+        cursor: default;
     }
 }
 

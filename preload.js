@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+// DONT FORGET UPDATE GLOBAL D TS FILE SYKA!
+
 contextBridge.exposeInMainWorld("config", {
     load: () => ipcRenderer.invoke("config:load"),
     getModsData: (mode) => ipcRenderer.invoke("config:getModsData", mode),

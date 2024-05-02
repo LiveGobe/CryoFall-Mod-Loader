@@ -4,7 +4,13 @@ const jszip = require("jszip")
 const path = require("node:path")
 const fs = require("node:fs")
 
-let config = { 
+try {
+    require('electron-reloader')(module, { debug: true, watchRenderer: true })
+} catch (e) {
+    console.error(e)
+}
+
+let config = {
     folderpaths: {
         client: path.join(process.env.HOME, "Documents\\AtomicTorchStudio\\CryoFall"),
         editor: path.join(process.env.HOME, "Documents\\AtomicTorchStudio\\CryoFall Editor"),
@@ -36,8 +42,8 @@ function getModPath(mode, modID) {
 }
 
 const main = () => {
-    const win = new BrowserWindow({ width: 800, height: 500, webPreferences: { preload: path.join(__dirname, "preload.js") }, autoHideMenuBar: true})
-    win.loadFile("index.html")
+    const win = new BrowserWindow({ width: 1600, height: 1000, webPreferences: { preload: path.join(__dirname, "preload.js") }, autoHideMenuBar: true })
+    win.loadFile("ui/index.html")
 }
 
 app.whenReady().then(() => {
@@ -96,7 +102,7 @@ app.whenReady().then(() => {
         } catch (e) {
             return { success: false, error: e.toString() }
         }
-        
+
         return { success: true }
     })
 

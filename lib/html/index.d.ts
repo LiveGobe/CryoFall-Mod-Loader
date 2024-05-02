@@ -1,0 +1,1 @@
+export declare function getElementByIdOfType<T>(id: string, ofType: (it: unknown) => it is T): T
