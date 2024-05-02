@@ -1,0 +1,195 @@
+
+* {
+    box-sizing: border-box;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 2rem;
+
+    & .actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+#folder-path {
+    width: 90%;
+}
+
+.main-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.mods-section {
+    & .search {
+        display: flex;
+        align-items: stretch;
+        position: relative;
+        height: 2.5rem;
+        margin-bottom: 2rem;
+        & label {
+            display: flex;
+            align-items: stretch;
+            position: relative;
+            flex: auto;
+            width: 100%;
+        }
+        & input[type=search] {
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+            padding-left: 2.5rem;
+            padding-right: 1rem;
+            line-height: 2.5rem;
+            background: transparent;
+            border: 1px solid black;
+            border-right: 0;
+            flex: auto;
+            width: 100%;
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 .25rem 0 rgba(0, 0, 0, 0.4);
+            }
+        }
+        & .icon {
+            pointer-events: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            position: absolute;
+            top: .5rem;
+            left: .5rem;
+        }
+
+        & button[type=submit] {
+            flex: none;
+            background: black;
+            color: whitesmoke;
+            border: 0;
+            box-shadow: none;
+            padding: 0 1rem;
+        }
+    }
+}
+
+.mods-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.mod-entry {
+    background: white;
+    box-shadow: 0 0 .5rem 0 rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    padding-left: 3rem;
+    position: relative;
+
+    & .status {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid currentColor;
+
+        &.enabled {
+            color: green;
+        }
+        &.disabled {
+            color: red;
+        }
+    }
+
+    & .title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        & .name {
+            flex: auto;
+            font-weight: bolder;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        & .version {
+            color: darkslateblue;
+            padding: .125rem;
+            border-radius: .125rem;
+            background: rgba(71, 61, 139, 0.2);
+            flex: none;
+            font-weight: lighter;
+        }
+    }
+
+    & .description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-clamp: 3;
+    }
+
+    & .actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+}
+
+button {
+    all: unset;
+    height: 2.5rem;
+    padding: 0 1rem;
+    background: whitesmoke;
+    box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    & .icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    &.primary {
+        background: #410cd4;
+        color: whitesmoke;
+        box-shadow: 0 0 .125rem 0 rgba(255, 0, 0, 0.4);
+    }
+
+    &.danger {
+        background: color-mix(in srgb, #ff0000 80%, whitesmoke);
+        color: whitesmoke;
+        box-shadow: 0 0 .125rem 0 rgba(255, 0, 0, 0.4);
+    }
+
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        background: color-mix(in srgb, grey 20%, whitesmoke);
+    }
+}
+
+
+[hidden] {
+    visibility: hidden;
+}
