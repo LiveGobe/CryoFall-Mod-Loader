@@ -64,6 +64,8 @@ app.whenReady().then(() => {
         const zip = new jszip()
 
         const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+        const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
+        console.log('modsConfig', modsConfig)
 
         let mods = [];
         fs.readdirSync(path.join(config.folderpaths[mode], "Mods")).forEach(mod => {
@@ -73,7 +75,8 @@ app.whenReady().then(() => {
                 zip.loadAsync(buffer).then(zipFiles => {
                     zipFiles.file("Header.xml").async("string").then(readMod => {
                         const parsedMod = parser.parse(readMod)
-                        parsedMod.root.enabled = modsConfig.mods.mod.find(i => i == (parsedMod.root.id + "_" + parsedMod.root.version)) ? true : false
+
+                        parsedMod.root.enabled = enabledMods.find(i => i == (parsedMod.root.id + "_" + parsedMod.root.version)) ? true : false
                         resolve(parsedMod)
                     })
                 })
@@ -89,7 +92,11 @@ app.whenReady().then(() => {
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-            modsConfig.mods.mod.push(modID);
+            const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
+            modsConfig.mods.mod = enabledMods
+            if (!modsConfig.mods.mod.includes(modID)) {
+                modsConfig.mods.mod.push(modID);
+            }
             fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
             return { success: true }
@@ -104,6 +111,8 @@ app.whenReady().then(() => {
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
+            modsConfig.mods.mod = enabledMods
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
             fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 

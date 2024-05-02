@@ -108,7 +108,7 @@ export class ModEntryComponent {
     }
 
     setModEnabled = () => {
-        setModEnabled({ modID: this.#$root.id, enabled: !this.#$statusEnabled.classList.contains('hidden') })
+        setModEnabled({ modID: this.#$root.id, enabled: this.#$statusEnabled.classList.contains('hidden') })
     }
     deleteMod = () => {
         deleteMod({ modID: this.#$root.id, })

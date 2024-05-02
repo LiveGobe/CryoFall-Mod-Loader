@@ -62,6 +62,7 @@ const isModeType = isOneOf(['client', 'server', 'editor'])
     modeChangedSignal.listen(updateLaunchHref)
     modeChangedSignal.listen(updateModList)
     setModEnabled.listen(async ({ modID, enabled }) => {
+        console.log('setModEnabled', modID, enabled)
         const res = enabled
             ? await config.setModEnabled($modeSelect.value, modID)
             : await config.setModDisabled($modeSelect.value, modID)
