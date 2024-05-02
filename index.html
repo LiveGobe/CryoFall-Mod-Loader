@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'" />
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            #folder-path {
+                width: 90%;
+            }
+
+            footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .mods-section {
+                display: flex;
+                gap: 10px;
+            }
+
+            .mods-list {
+                display: flex;
+                flex-direction: column;
+                max-height: 300px;
+                width: calc(100% / 3);
+                border: 1px solid black;
+                overflow-y: scroll;
+            }
+
+            .mod-info {
+                width: calc(100% / 3);
+            }
+
+            .mod-actions {
+                width: calc(100% / 3);
+            }
+
+            .mod-entry {
+                cursor: pointer;
+            }
+
+            .mod-entry.selected {
+                background-color: darkgrey;
+                color: white;
+            }
+        </style>
+        <title>CryoFall Mod Loader</title>
+    </head>
+    <body>
+        <header>
+            <div>
+                Mode: 
+                <select name="mode-select" id="mode-select">
+                    <option value="client">Client</option>
+                    <option value="editor">Editor</option>
+                    <option value="server">Server</option>
+                </select>
+            </div>
+            <input type="text" name="folder-path" id="folder-path" placeholder="Folder path to CryoFall directory with modsConfig.xml" />
+        </header>
+        <main>
+            <div id="client-mods" class="mods-section">
+                <div id="client-mods-list" class="mods-list">
+                    <div class="mod-entry selected">mod 1</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                    <div class="mod-entry">mod 2</div>
+                </div>
+                <div id="client-mod-info" class="mod-info">
+                    Loading...
+                </div>
+                <div id="client-mod-actions" class="mod-actions">
+                    <button type="button">Add</button>
+                    <button type="button">Delete</button>
+                    <button type="button">Save</button>
+                </div>
+            </div>
+            <div id="editor-mods" style="display: hidden"  class="mods-section">
+
+            </div>
+            <div id="server-mods" style="display: hidden"  class="mods-section">
+
+            </div>
+        </main>
+        <footer>Copyright (c) LiveGobe 2024</footer>
+    </body>
+    <script src="./renderer.js"></script>
+</html>

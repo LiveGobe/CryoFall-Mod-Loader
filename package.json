@@ -1,0 +1,23 @@
+{
+  "name": "cryofall-mod-loader",
+  "version": "0.0.1",
+  "description": "A mod loader for CryoFall",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "LiveGobe",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "electron": "^30.0.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "fast-xml-parser": "^4.3.6",
+    "jszip": "^3.10.1"
+  }
+}
