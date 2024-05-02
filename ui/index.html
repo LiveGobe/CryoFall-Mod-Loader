@@ -8,6 +8,33 @@
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" />
     <link rel="stylesheet" href="style.css" />
     <title>CryoFall Mod Loader</title>
+    <template id="mod-entry-tpl">
+        <li class="mod-entry">
+            <svg class="status enabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
+                <path fill="currentColor" d="M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
+    c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
+    L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z" />
+            </svg>
+            <svg class="status disabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
+                <path d="M16.337 1.5 L1.5 16.337 M1.5 1.5 L16.337 16.337" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <header class="header">
+                <span class="title" data-bind="title"></span>
+                <span class="version"></span>
+            </header>
+            <section class="description"></section>
+            <footer class="footer">
+                <span class="author"></span>
+                <div class="actions">
+                    <button class="button" data-action="setModEnabled" type="button">setModEnabled</button>
+                    <button class="button danger" data-action="deleteMod" type="button">deleteMod</button>
+                </div>
+            </footer>
+        </li>
+    </template>
 </head>
 
 <body>
@@ -15,7 +42,7 @@
         <div>
             Mode:
             <select name="mode-select" id="mode-select">
-                <option value="client">Client</option>
+                <option value="client" selected>Client</option>
                 <option value="editor">Editor</option>
                 <option value="server">Server</option>
             </select>
@@ -73,62 +100,7 @@
         </section>
     </header>
     <main class="main-content">
-        <template id="mod-entry">
-            <li class="mod-entry">
-                <svg class="status enabled" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
-                    <path fill="currentColor" d="M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
-c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
-L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z" />
-                </svg>
-                <svg class="status disabled" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
-                    <path d="M16.337 1.5 L1.5 16.337 M1.5 1.5 L16.337 16.337" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <header class="title">
-                    <span class="name">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod
-                        debitis deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos
-                        voluptatem blanditiis repellat eligendi laboriosam!
-                    </span>
-                    <span class="version">
-                        1.0.0
-                    </span>
-                </header>
-                <section class="description">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias omnis sint sunt nam quod debitis
-                    deserunt aliquid, itaque quis doloremque nihil laudantium eos officiis dignissimos voluptatem
-                    blanditiis repellat eligendi laboriosam!
-                </section>
-                <footer class="actions">
-                    <button class="button" type="button">
-                        activate
-                    </button>
-                    <button class="button" type="button">
-                        deactivate
-                    </button>
-                    <button class="button danger" type="button">
-                        delete
-                    </button>
-                </footer>
-            </li>
-        </template>
+
         <div id="client-mods" class="mods-section">
             <form class="search">
                 <label>
@@ -152,9 +124,7 @@ L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z" />
                     Search
                 </button>
             </form>
-            <ul id="client-mods-list" class="mods-list">
-
-            </ul>
+            <ul id="mod-list" class="mods-list"></ul>
         </div>
         <footer class="main-footer">Copyright (c) LiveGobe & Padreramnt 2024</footer>
     </main>

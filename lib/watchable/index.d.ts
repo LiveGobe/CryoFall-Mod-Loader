@@ -7,8 +7,11 @@ export declare interface ReadonlyWatchable<T> {
 }
 
 export declare class Watchable<T> {
-    static fromInput<T extends string>(target: HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement): ReadonlyWatchable<T>
-    constructor(value: T);
+    static fromInput<T extends string>(
+        target: HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement,
+        ofType?: (it: unknown) => it is T
+    ): ReadonlyWatchable<T>
+    constructor(value: T, ofType?: (it: unknown) => it is T);
     value: T
     setValue(value: T): void
     getValue(): T

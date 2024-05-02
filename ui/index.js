@@ -1,23 +1,23 @@
 // @ts-check
 /// <reference path="../global.d.ts" />
 
-import { isInstanceOf } from "../lib/guard/index.js"
-import { getElementByIdOfType } from "../lib/html/index.js"
-import { createSignal } from "../lib/signal/index.js"
+import { isInstanceOf, isOneOf } from "../lib/guard/index.js"
+import { getElementById, getElementByIdOfType } from "../lib/html/index.js"
 import { Watchable } from "../lib/watchable/index.js"
+import { ModEntryTemplate } from "./components/mod-entry/index.js"
+import { modeChangedSignal, setModEnabled } from "./signals.js"
 
 const cryofallLaunchLink = 'steam://rungameid/829590'
-console.log('cryofallLaunchLink', cryofallLaunchLink)
 const cryofallEditorLaunchLink = 'steam://rungameid/1061720'
-console.log('cryofallEditorLaunchLink', cryofallEditorLaunchLink)
 
 function createModeSelectStream() {
-    return Watchable.fromInput(getElementByIdOfType('mode-select', isInstanceOf(HTMLSelectElement)))
+    return Watchable.fromInput(getElementByIdOfType('mode-select', isInstanceOf(HTMLSelectElement)), isModeType)
 }
+
+const isModeType = isOneOf(['client', 'server', 'editor'])
 
 !async function () {
     let cfg = await config.load()
-    let data = await config.getModsData("client")
 
     const $lauchAnchor = getElementByIdOfType('launch-button', isInstanceOf(HTMLAnchorElement))
     $lauchAnchor.addEventListener('click', e => {
@@ -27,9 +27,6 @@ function createModeSelectStream() {
     })
 
     const $modeSelect = createModeSelectStream()
-    const modeChangedSignal = createSignal()
-
-    $modeSelect.update.listen(modeChangedSignal)
     function updateLaunchHref(mode) {
         $lauchAnchor.classList.remove('disabled')
         switch (mode) {
@@ -46,35 +43,35 @@ function createModeSelectStream() {
         }
     }
 
+    const $modList = getElementById('mod-list')
+    const modEntryTemplate = new ModEntryTemplate('mod-entry-tpl')
+
+    async function updateModList(mode) {
+        console.log('updateModList', mode)
+        $modList.childNodes.forEach(node => {
+            node.remove()
+        })
+        const { modsData } = await config.getModsData(mode)
+        modsData.forEach(modData => {
+            const modEntryComponent = modEntryTemplate.create(modData.root)
+            modEntryComponent.mount($modList)
+        })
+    }
+
 
     modeChangedSignal.listen(updateLaunchHref)
-    const $folderPath = document.getElementById("folder-path")
-    const $clientModsList = document.getElementById("client-mods-list")
+    modeChangedSignal.listen(updateModList)
+    setModEnabled.listen(async ({ modID, enabled }) => {
+        const res = enabled
+            ? await config.setModEnabled($modeSelect.value, modID)
+            : await config.setModDisabled($modeSelect.value, modID)
+        if (res.success) {
+            updateModList($modeSelect.value)
+        } else {
+            console.error(res.errmsg)
+        }
+    })
 
-    // $folderPath.value = cfg.folderpaths.client
-
-    // $modeSelect.addEventListener("change", async e => {
-    //     switch ($modeSelect.value) {
-    //         case "client":
-    //             $folderPath.setAttribute("placeholder", "Folder path to CryoFall directory with modsConfig.xml")
-    //             $folderPath.value = cfg.folderpaths.client
-    //             $clientModsList.innerHTML = ""
-    //             let modList = await config.getXML("client")
-    //             modList.mods.mod.slice(1).forEach(mod => {
-    //                 let elem = document.createElement("div")
-    //                 elem.classList.add("mod-entry")
-    //                 elem.innerText = "MOD"
-    //                 $clientModsList.append(elem)
-    //             })
-    //             break
-    //         case "editor":
-    //             $folderPath.setAttribute("placeholder", "Folder path to CryoFall Editor directory with modsConfig.xml")
-    //             $folderPath.value = cfg.folderpaths.editor
-    //             break
-    //         case "server":
-    //             $folderPath.setAttribute("placeholder", "Folder path to CryoFall Server Data directory with modsConfig.xml")
-    //             $folderPath.value = cfg.folderpaths.server
-    //             break
-    //     }
-    // })
+    modeChangedSignal($modeSelect.value)
+    $modeSelect.update.listen(modeChangedSignal)
 }()

@@ -16,14 +16,21 @@ declare type MutationResult =
     | MutationSuccessResult
 
 declare const config: {
-    load(): {
+    load(): Promise<{
         readonly folderpaths: {
             readonly client: string
             readonly editor: string
             readonly server: string
         }
-    }
-    getModsData(mode: ModeType): {
+    }>
+    save(config: {
+        readonly folderpaths: {
+            readonly client: string
+            readonly editor: string
+            readonly server: string
+        }
+    }): Promise<MutationResult>
+    getModsData(mode: ModeType): Promise<{
         readonly modsConfig: {
             readonly '?xml': '',
             readonly mods: {
@@ -44,9 +51,9 @@ declare const config: {
                 readonly enabled: boolean
             }
         }[]
-    }
-    setModEnabled(mode: ModeType, modID: string): MutationResult
-    setModDisabled(mode: ModeType, modID: string): MutationResult
-    uploadMod(): void
-    uploadModLink(): void
+    }>
+    setModEnabled(mode: ModeType, modID: string): Promise<MutationResult>
+    setModDisabled(mode: ModeType, modID: string): Promise<MutationResult>
+    uploadMod(mode: ModeType, mod: Int8Array): Promise<MutationResult>
+    uploadModLink(mode: ModeType, link: string): Promise<MutationResult>
 }

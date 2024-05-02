@@ -143,11 +143,11 @@ html {
         }
     }
 
-    & .title {
+    & .header {
         display: flex;
         align-items: center;
         gap: 1rem;
-        & .name {
+        & .title {
             flex: auto;
             font-weight: bolder;
             overflow: hidden;
@@ -170,6 +170,20 @@ html {
         -webkit-box-orient: vertical;
         overflow: hidden;
         line-clamp: 3;
+    }
+
+    & .footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    & .author {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     & .actions {
@@ -217,6 +231,7 @@ button,
 }
 
 
-[hidden] {
+[hidden],
+.hidden {
     visibility: hidden;
 }
