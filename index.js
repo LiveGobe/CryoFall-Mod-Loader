@@ -41,6 +41,8 @@ function getModPath(mode, modID) {
     return path.join(config.folderpaths[mode], "Mods", modID + ".mpk")
 }
 
+function isModArray(mod) { return (typeof mod == "Object") }
+
 const main = () => {
     const win = new BrowserWindow({ width: 1600, height: 1000, webPreferences: { preload: path.join(__dirname, "preload.js") }, autoHideMenuBar: true })
     win.loadFile("ui/index.html")
@@ -60,7 +62,7 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:getModsData", async (_, mode) => {
-        const parser = new XMLParser()
+        const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
 
         const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
@@ -87,8 +89,8 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:setModEnabled", (_, mode, modID) => {
-        const parser = new XMLParser()
-        const builder = new XMLBuilder()
+        const parser = new XMLParser({ ignoreAttributes: false })
+        const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
@@ -106,8 +108,8 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:setModDisabled", (_, mode, modID) => {
-        const parser = new XMLParser()
-        const builder = new XMLBuilder()
+        const parser = new XMLParser({ ignoreAttributes: false })
+        const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
@@ -123,7 +125,7 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:uploadMod", async (_, mode, mod) => {
-        const parser = new XMLParser()
+        const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
         try {
             const zipFiles = await zip.loadAsync(mod)
@@ -138,7 +140,7 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:uploadModLink", async (_, mode, link) => {
-        const parser = new XMLParser()
+        const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
 
         try {
@@ -156,8 +158,8 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:deleteMod", (_, mode, modID) => {
-        const parser = new XMLParser()
-        const builder = new XMLBuilder()
+        const parser = new XMLParser({ ignoreAttributes: false })
+        const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
             fs.rmSync(getModPath(mode, modID))
