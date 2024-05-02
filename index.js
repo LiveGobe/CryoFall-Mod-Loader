@@ -49,6 +49,16 @@ const main = () => {
 app.whenReady().then(() => {
     ipcMain.handle("config:load", () => config)
 
+    ipcMain.handle("config:save", (_, conf) => {
+        try {
+            fs.writeFileSync(path.join(__dirname, "config.json"), conf);
+        } catch (e) {
+            return { success: false, error: e.toString() }
+        }
+
+        return { success: true }
+    })
+
     ipcMain.handle("config:getModsData", async (_, mode) => {
         const parser = new XMLParser()
         const zip = new jszip()
@@ -75,10 +85,12 @@ app.whenReady().then(() => {
 
     ipcMain.handle("config:setModEnabled", (_, mode, modID) => {
         const parser = new XMLParser()
+        const builder = new XMLBuilder()
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
             modsConfig.mods.mod.push(modID);
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
             return { success: true }
         } catch (e) {
@@ -88,10 +100,12 @@ app.whenReady().then(() => {
 
     ipcMain.handle("config:setModDisabled", (_, mode, modID) => {
         const parser = new XMLParser()
+        const builder = new XMLBuilder()
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
             return { success: true }
         } catch (e) {
@@ -127,6 +141,23 @@ app.whenReady().then(() => {
             fs.writeFileSync(getModPath(mode, fileName), file);
         } catch (e) {
             return { success: false, error: e.toString() }
+        }
+
+        return { success: true }
+    })
+
+    ipcMain.handle("config:deleteMod", (_, mode, modID) => {
+        const parser = new XMLParser()
+        const builder = new XMLBuilder()
+
+        try {
+            fs.rmSync(getModPath(mode, modID))
+
+            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
+        } catch (e) {
+            return { sucess: false, error: e.toString() }
         }
 
         return { success: true }
