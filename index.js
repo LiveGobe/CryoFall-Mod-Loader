@@ -136,6 +136,16 @@ app.whenReady().then(() => {
         return { success: true }
     })
 
+    ipcMain.handle("config:deleteMod", (_, mode, modID) => {
+        try {
+            fs.rmSync(getModPath(mode, modID))
+        } catch (e) {
+            return { sucess: false, error: e.toString() }
+        }
+
+        return { success: true }
+    })
+
     main()
 
     app.on("activate", () => {

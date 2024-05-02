@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld("config", {
     setModEnabled: (mode, modID) => ipcRenderer.invoke("config:setModEnabled", mode, modID),
     setModDisabled: (mode, modID) => ipcRenderer.invoke("config:setModDisabled", mode, modID),
     uploadMod: (mode, mod) => ipcRenderer.invoke("config:uploadMod", mode, mod),
-    uploadModLink: (mode, link) => ipcRenderer.invoke("config:uploadModLink", mode, link)
+    uploadModLink: (mode, link) => ipcRenderer.invoke("config:uploadModLink", mode, link),
+    deleteMod: (mode, modID) => ipcRenderer.invoke("config:deleteMod", mode, modID)
 });
