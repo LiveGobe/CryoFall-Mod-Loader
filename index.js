@@ -79,10 +79,12 @@ app.whenReady().then(() => {
 
     ipcMain.handle("config:setModEnabled", (_, mode, modID) => {
         const parser = new XMLParser()
+        const builder = new XMLBuilder()
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
             modsConfig.mods.mod.push(modID);
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
             return { success: true }
         } catch (e) {
@@ -92,10 +94,12 @@ app.whenReady().then(() => {
 
     ipcMain.handle("config:setModDisabled", (_, mode, modID) => {
         const parser = new XMLParser()
+        const builder = new XMLBuilder()
 
         try {
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
             return { success: true }
         } catch (e) {
@@ -137,8 +141,15 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("config:deleteMod", (_, mode, modID) => {
+        const parser = new XMLParser()
+        const builder = new XMLBuilder()
+
         try {
             fs.rmSync(getModPath(mode, modID))
+
+            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
+            fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
         } catch (e) {
             return { sucess: false, error: e.toString() }
         }
