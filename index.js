@@ -76,19 +76,27 @@ app.whenReady().then(() => {
     ipcMain.handle("config:setModEnabled", (_, mode, modID) => {
         const parser = new XMLParser()
 
-        const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-        modsConfig.mods.mod.push(modID);
+        try {
+            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            modsConfig.mods.mod.push(modID);
 
-        return true
+            return { success: true }
+        } catch (e) {
+            return { success: false, error: e.toString() }
+        }
     })
 
     ipcMain.handle("config:setModDisabled", (_, mode, modID) => {
         const parser = new XMLParser()
 
-        const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-        modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
+        try {
+            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
 
-        return false
+            return { success: true }
+        } catch (e) {
+            return { success: false, error: e.toString() }
+        }
     })
 
     ipcMain.handle("config:uploadMod", async (_, mode, mod) => {
