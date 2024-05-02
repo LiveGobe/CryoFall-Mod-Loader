@@ -2,6 +2,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("config", {
     load: () => ipcRenderer.invoke("config:load"),
-    getXML: (mode) => ipcRenderer.invoke("config:getXML", mode),
-    getModData: (mode, mod) => ipcRenderer.invoke("mods:getData", mode, mod)
+    getModsData: (mode) => ipcRenderer.invoke("config:getModsData", mode),
+    setModEnabled: (mode, modID) => ipcRenderer.invoke("config:setModEnabled", mode, modID),
+    setModDisabled: (mode, modID) => ipcRenderer.invoke("config:setModDisabled", mode, modID),
+    uploadMod: (mode, mod) => ipcRenderer.invoke("config:uploadMod", mode, mod),
+    uploadModLink: (mode, link) => ipcRenderer.invoke("config:uploadModLink", mode, link)
 });
