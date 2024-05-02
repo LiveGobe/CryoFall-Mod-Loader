@@ -1,78 +1,240 @@
 // @ts-check
 /// <reference path="../global.d.ts" />
 
-import { isInstanceOf, isOneOf } from "../lib/guard/index.js"
-import { getElementById, getElementByIdOfType } from "../lib/html/index.js"
-import { Watchable } from "../lib/watchable/index.js"
-import { ModEntryTemplate } from "./components/mod-entry/index.js"
-import { modeChangedSignal, setModEnabled } from "./signals.js"
+import { cloneElement, getElementById, querySelector } from "../lib/html/index.js"
 
-const cryofallLaunchLink = 'steam://rungameid/829590'
-const cryofallEditorLaunchLink = 'steam://rungameid/1061720'
+// view
+const elViewModsSwitchControl = getElementById(document, 'view-switch-control-mods', HTMLInputElement)
+const elViewConfigSwitchControl = getElementById(document, 'view-switch-control-config', HTMLInputElement)
+const elViewModsSwitchIcon = getElementById(document, 'view-switch-icon-mods')
+const elViewConfigSwitchIcon = getElementById(document, 'view-switch-icon-config')
+// modlist
+const elModsView = getElementById(document, 'mods-view')
+const elModListModeSwitchClient = getElementById(document, 'mod-list-mode-switch-client', HTMLInputElement)
+const elModListModeSwitchServer = getElementById(document, 'mod-list-mode-switch-server', HTMLInputElement)
+const elModListModeSwitchEditor = getElementById(document, 'mod-list-mode-switch-editor', HTMLInputElement)
 
-function createModeSelectStream() {
-    return Watchable.fromInput(getElementByIdOfType('mode-select', isInstanceOf(HTMLSelectElement)), isModeType)
+const elModList = getElementById(document, 'mod-list')
+const elModEntryTemplate = getElementById(document, 'mod-entry-template', HTMLTemplateElement)
+
+// config
+const elConfigView = getElementById(document, 'config-view', HTMLFormElement)
+const elFolderpathsClientInput = getElementById(document, 'folderpaths-client-input', HTMLInputElement)
+const elFolderpathsEditorInput = getElementById(document, 'folderpaths-editor-input', HTMLInputElement)
+const elFolderpathsServerInput = getElementById(document, 'folderpaths-server-input', HTMLInputElement)
+
+function getCurrentView() {
+    if (elViewModsSwitchControl.checked) {
+        return 'mods'
+    }
+    if (elViewConfigSwitchControl.checked) {
+        return 'config'
+    }
+    return 'mods'
 }
 
-const isModeType = isOneOf(['client', 'server', 'editor'])
+function getCurrentModListMode() {
+    if (elModListModeSwitchClient.checked) {
+        return 'client'
+    }
+    if (elModListModeSwitchServer.checked) {
+        return 'server'
+    }
+    if (elModListModeSwitchEditor.checked) {
+        return 'editor'
+    }
+    return ''
+}
 
-!async function () {
-    let cfg = await config.load()
+// api call
+async function deleteMod(mode, modID) {
+    const currentMode = getCurrentModListMode()
+    if (currentMode !== mode || !currentMode) {
+        return
+    }
+    const res = await api.deleteMod(currentMode, modID)
+    if (!res.success) {
+        console.error(res.errmsg)
+        return
+    }
+    await loadModsData()
+}
 
-    const $lauchAnchor = getElementByIdOfType('launch-button', isInstanceOf(HTMLAnchorElement))
-    $lauchAnchor.addEventListener('click', e => {
-        if (!$lauchAnchor.href || $lauchAnchor.classList.contains('disabled')) {
-            e.preventDefault()
+async function setModEnabled(mode, modID) {
+    toggleModEnabled(mode, modID, true)
+}
+async function setModDisabled(mode, modID) {
+    toggleModEnabled(mode, modID, false)
+}
+async function toggleModEnabled(mode, modID, enabled) {
+    const currentMode = getCurrentModListMode()
+    if (currentMode !== mode || !currentMode) {
+        return
+    }
+    const res = enabled
+        ? await api.setModEnabled(currentMode, modID)
+        : await api.setModDisabled(currentMode, modID)
+    if (!res.success) {
+        console.error(res.errmsg)
+    }
+    await loadModsData()
+}
+
+async function loadModsData() {
+    const currentMode = getCurrentModListMode()
+    if (!currentMode) {
+        return
+    }
+    const { modsData } = await api.getModsData(currentMode)
+    renderModList(currentMode, modsData)
+}
+
+async function loadConfig() {
+    const config = await api.loadConfig()
+    elFolderpathsClientInput.value = config.folderpaths.client
+    elFolderpathsEditorInput.value = config.folderpaths.editor
+    elFolderpathsServerInput.value = config.folderpaths.server
+}
+
+async function saveConfig() {
+    const res = await api.saveConfig({
+        folderpaths: {
+            client: elFolderpathsClientInput.value,
+            editor: elFolderpathsEditorInput.value,
+            server: elFolderpathsServerInput.value,
         }
     })
+    if (!res.success) {
+        console.error(res.errmsg)
+    }
+    await loadConfig()
+}
 
-    const $modeSelect = createModeSelectStream()
-    function updateLaunchHref(mode) {
-        $lauchAnchor.classList.remove('disabled')
-        switch (mode) {
-            case 'client':
-                $lauchAnchor.href = cryofallLaunchLink
-                break
-            case 'server':
-                $lauchAnchor.href = ''
-                $lauchAnchor.classList.add('disabled')
-                break
-            case 'editor':
-                $lauchAnchor.href = cryofallEditorLaunchLink
-                break
+// render
+
+function getModEntryFields(root) {
+    return {
+        title: querySelector(root, `.title`),
+        author: querySelector(root, `.author`),
+        version: querySelector(root, `.version`),
+        description: querySelector(root, `.description`),
+        deleteMod: querySelector(root, `.button[data-action=deleteMod]`),
+        statusSwitch: {
+            control: querySelector(root, `.status-switch.control`, HTMLInputElement),
+            button: querySelector(root, `.status-switch.button`, HTMLLabelElement),
+            titleEnabled: querySelector(root, `.status-switch.title.enabled`),
+            titleDisabled: querySelector(root, `.status-switch.title.disabled`),
         }
     }
+}
 
-    const $modList = getElementById('mod-list')
-    const modEntryTemplate = new ModEntryTemplate('mod-entry-tpl')
-
-    async function updateModList(mode) {
-        console.log('updateModList', mode)
-        $modList.childNodes.forEach(node => {
-            node.remove()
-        })
-        const { modsData } = await config.getModsData(mode)
-        modsData.forEach(modData => {
-            const modEntryComponent = modEntryTemplate.create(modData.root)
-            modEntryComponent.mount($modList)
-        })
+function renderModEntry(mode, modData) {
+    const currentMode = getCurrentModListMode()
+    if (currentMode !== mode) {
+        return
     }
+    let root = elModList.querySelector(`.mod-entry[data-mod-id=${modData.root.id}]`)
+    if (!root) {
+        root = querySelector(cloneElement(elModEntryTemplate.content), '.mod-entry')
+        root.setAttribute('data-mod-id', modData.root.id)
+    }
+    const elements = getModEntryFields(root)
+    if (elements.title.innerText !== modData.root.title) {
+        elements.title.innerText = modData.root.title
+    }
+    if (elements.author.innerText !== modData.root.author) {
+        elements.author.innerText = modData.root.author
+    }
+    if (elements.version.innerText !== modData.root.version) {
+        elements.version.innerText = modData.root.version
+    }
+    if (elements.description.innerText !== modData.root.description) {
+        elements.description.innerText = modData.root.description
+    }
+    elements.statusSwitch.control.id = 'mod-entry-status-switch--' + modData.root.id
+    elements.statusSwitch.control.checked = modData.root.enabled
+    elements.statusSwitch.button.setAttribute('for', elements.statusSwitch.control.id)
+    elements.deleteMod.addEventListener('click', () => {
+        deleteMod(mode, modData.root.id)
+    }, { once: true })
+    elements.statusSwitch.control.addEventListener('change', () => {
+        toggleModEnabled(currentMode, modData.root.id, elements.statusSwitch.control.checked)
+    }, { once: true })
+    return root
+}
 
-
-    modeChangedSignal.listen(updateLaunchHref)
-    modeChangedSignal.listen(updateModList)
-    setModEnabled.listen(async ({ modID, enabled }) => {
-        console.log('setModEnabled', modID, enabled)
-        const res = enabled
-            ? await config.setModEnabled($modeSelect.value, modID)
-            : await config.setModDisabled($modeSelect.value, modID)
-        if (res.success) {
-            updateModList($modeSelect.value)
-        } else {
-            console.error(res.errmsg)
+function renderModList(mode, modsData) {
+    const currentMode = getCurrentModListMode()
+    if (mode !== currentMode) {
+        return
+    }
+    const usedModIDs = new Set()
+    modsData.every((modData, index) => {
+        // array every can be used as forEach with flow control statements
+        usedModIDs.add(modData.id)
+        const modEntry = renderModEntry(currentMode, modData)
+        if (!modEntry) {
+            // break
+            return false
         }
+        // reorder mod entries
+        if (elModList.childNodes.item(index) !== modEntry) {
+            elModList.insertBefore(modEntry, elModList.childNodes.item(index))
+        }
+        // continue
+        return true
     })
+    for (let i = modsData.length; i < elModList.childNodes.length; i++) {
+        // remove rest mod entries
+        elModList.childNodes.item(i)?.remove()
+    }
+}
 
-    modeChangedSignal($modeSelect.value)
-    $modeSelect.update.listen(modeChangedSignal)
-}()
+function switchToConfigView() {
+    elConfigView.hidden = false
+    elModsView.hidden = true
+    elViewConfigSwitchIcon.hidden = true
+    elViewModsSwitchIcon.hidden = false
+}
+
+function switchToModsView() {
+    elConfigView.hidden = true
+    elModsView.hidden = false
+    elViewConfigSwitchIcon.hidden = false
+    elViewModsSwitchIcon.hidden = true
+    loadConfig()
+}
+
+function updateView() {
+    const currentView = getCurrentView()
+    switch (currentView) {
+        case 'config':
+            switchToConfigView()
+            break
+        case 'mods':
+            switchToModsView()
+            break
+    }
+}
+
+// setup handlers
+elViewModsSwitchControl.addEventListener('change', updateView)
+elViewConfigSwitchControl.addEventListener('change', updateView)
+
+elModListModeSwitchClient.addEventListener('change', loadModsData)
+elModListModeSwitchServer.addEventListener('change', loadModsData)
+elModListModeSwitchEditor.addEventListener('change', loadModsData)
+
+elConfigView.addEventListener('submit', e => {
+    e.preventDefault()
+    saveConfig()
+})
+elConfigView.addEventListener('reset', e => {
+    e.preventDefault()
+    loadConfig()
+})
+
+// load data
+updateView()
+loadConfig()
+loadModsData()

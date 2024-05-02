@@ -18,17 +18,32 @@ let config = {
     }
 }
 
-if (fs.existsSync("./config.json")) config = require("./config.json")
-else {
+function loadConfigJson() {
+    if (fs.existsSync("./config.json")) {
+        try {
+            config = JSON.parse(fs.readFileSync(path.join(__dirname, "config.json")))
+        } catch (e) {
+            console.error(e)
+        }
+    }
     if (!fs.existsSync(config.folderpaths.client)) {
-        if (!fs.existsSync(path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall"))) config.folderpaths.client = ""
-        else config.folderpaths.client = path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall")
+        if (!fs.existsSync(path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall"))) {
+            config.folderpaths.client = ""
+        }
+        else {
+            config.folderpaths.client = path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall")
+        }
     }
 
     if (!fs.existsSync(config.folderpaths.editor)) {
-        if (!fs.existsSync(path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall Editor"))) config.folderpaths.editor = ""
-        else config.folderpaths.editor = path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall Editor")
+        if (!fs.existsSync(path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall Editor"))) {
+            config.folderpaths.editor = ""
+        }
+        else {
+            config.folderpaths.editor = path.join(process.env.OneDrive, "Documents\\AtomicTorchStudio\\CryoFall Editor")
+        }
     }
+    return config
 }
 
 if (require('electron-squirrel-startup')) app.quit()
@@ -41,33 +56,36 @@ function getModPath(mode, modID) {
     return path.join(config.folderpaths[mode], "Mods", modID + ".mpk")
 }
 
-function isModArray(mod) { return (typeof mod == "Object") }
-
 const main = () => {
     const win = new BrowserWindow({ width: 1600, height: 1000, webPreferences: { preload: path.join(__dirname, "preload.js") }, autoHideMenuBar: true })
     win.loadFile("ui/index.html")
 }
 
 app.whenReady().then(() => {
-    ipcMain.handle("config:load", () => config)
+    ipcMain.handle("api:loadConfig", () => loadConfigJson())
 
-    ipcMain.handle("config:save", (_, conf) => {
+    ipcMain.handle("api:saveConfig", (_, conf) => {
         try {
-            fs.writeFileSync(path.join(__dirname, "config.json"), conf);
+            if (!fs.existsSync(conf.folderpaths.client)) {
+                throw new Error('client folder fot specified')
+            }
+            if (!fs.existsSync(conf.folderpaths.editor)) {
+                throw new Error('editor folder fot specified')
+            }
+            fs.writeFileSync(path.join(__dirname, "config.json"), JSON.stringify(conf, null, 2));
         } catch (e) {
-            return { success: false, error: e.toString() }
+            return { success: false, errmsg: e.toString() }
         }
 
         return { success: true }
     })
 
-    ipcMain.handle("config:getModsData", async (_, mode) => {
+    ipcMain.handle("api:getModsData", async (_, mode) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
 
         const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
         const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
-        console.log('modsConfig', modsConfig)
 
         let mods = [];
         fs.readdirSync(path.join(config.folderpaths[mode], "Mods")).forEach(mod => {
@@ -78,7 +96,7 @@ app.whenReady().then(() => {
                     zipFiles.file("Header.xml").async("string").then(readMod => {
                         const parsedMod = parser.parse(readMod)
 
-                        parsedMod.root.enabled = enabledMods.find(i => i == (parsedMod.root.id + "_" + parsedMod.root.version)) ? true : false
+                        parsedMod.root.enabled = enabledMods.find(i => i.startsWith(parsedMod.root.id)) ? true : false
                         resolve(parsedMod)
                     })
                 })
@@ -88,7 +106,7 @@ app.whenReady().then(() => {
         return { modsData: await Promise.all(mods), modsConfig }
     })
 
-    ipcMain.handle("config:setModEnabled", (_, mode, modID) => {
+    ipcMain.handle("api:setModEnabled", (_, mode, modID) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
@@ -107,7 +125,7 @@ app.whenReady().then(() => {
         }
     })
 
-    ipcMain.handle("config:setModDisabled", (_, mode, modID) => {
+    ipcMain.handle("api:setModDisabled", (_, mode, modID) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
@@ -124,7 +142,7 @@ app.whenReady().then(() => {
         }
     })
 
-    ipcMain.handle("config:uploadMod", async (_, mode, mod) => {
+    ipcMain.handle("api:uploadMod", async (_, mode, mod) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
         try {
@@ -139,7 +157,7 @@ app.whenReady().then(() => {
         return { success: true }
     })
 
-    ipcMain.handle("config:uploadModLink", async (_, mode, link) => {
+    ipcMain.handle("api:uploadModLink", async (_, mode, link) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
 
@@ -157,7 +175,7 @@ app.whenReady().then(() => {
         return { success: true }
     })
 
-    ipcMain.handle("config:deleteMod", (_, mode, modID) => {
+    ipcMain.handle("api:deleteMod", (_, mode, modID) => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 

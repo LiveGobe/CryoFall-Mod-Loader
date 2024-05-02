@@ -7,16 +7,19 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components/mod-entry/style.css" />
+    <link rel="stylesheet" href="components/select/style.css" />
     <title>CryoFall Mod Loader</title>
-    <template id="mod-entry-tpl">
+    <template id="mod-entry-template">
         <li class="mod-entry">
-            <svg class="status enabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            <input type="checkbox" class="status-switch control" hidden />
+            <svg class="status-switch icon enabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
                 <path fill="currentColor" d="M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
     c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
     L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z" />
             </svg>
-            <svg class="status disabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            <svg class="status-switch icon disabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
                 <path d="M16.337 1.5 L1.5 16.337 M1.5 1.5 L16.337 16.337" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round" />
@@ -29,8 +32,13 @@
             <footer class="footer">
                 <span class="author"></span>
                 <div class="actions">
-                    <button class="button" data-action="setModEnabled" type="button">setModEnabled</button>
-                    <button class="button danger" data-action="deleteMod" type="button">deleteMod</button>
+                    <label class="status-switch button" style="flex-direction: column;" type="button">
+                        <span class="status-switch title disabled">enable</span>
+                        <span class="status-switch title enabled">disable</span>
+                        <span style="position: relative;visibility: hidden;top: 0;left: 0;">enable</span>
+                        <span style="position: relative;visibility: hidden;top: 0;left: 0;">disable</span>
+                    </label>
+                    <button class="button danger" data-action="deleteMod" type="button">delete</button>
                 </div>
             </footer>
         </li>
@@ -38,17 +46,18 @@
 </head>
 
 <body>
+    <input id="view-switch-control-mods" type="radio" name="view-switch control" value="mods" checked hidden />
+    <input id="view-switch-control-config" type="radio" name="view-switch control" value="config" hidden />
     <header class="main-header">
-        <div>
-            Mode:
-            <select name="mode-select" id="mode-select">
-                <option value="client" selected>Client</option>
-                <option value="editor">Editor</option>
-                <option value="server">Server</option>
-            </select>
+        <div class="logo">
+            CryoFall Mod Loader
         </div>
         <section class="actions">
-            <button type="button">
+            <a id="launch-button" href="steam://rungameid/829590" class="button primary" type="button">
+                Launch
+            </a>
+            <label id="view-switch-icon-config" class="view-switch icon config button" for="view-switch-control-config"
+                role="button" hidden>
                 <svg width="16" height="16" class="icon" viewBox="0 0 8.4666669 8.4666669" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#"
                     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -56,7 +65,6 @@
                     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
                     xmlns:svg="http://www.w3.org/2000/svg">
-
                     <g transform="translate(0,-288.53332)">
                         <path
                             d="m 14,1 c -0.43057,-2.2524e-4 -0.812955,0.2751544 -0.949219,0.6835938 l -1.015625,3.046875 c -0.410051,0.1443778 -0.81115,0.3099019 -1.203125,0.4980468 L 7.9589844,3.7929688 c -0.385025,-0.192405 -0.8499682,-0.1168812 -1.1542969,0.1875 l -2.828125,2.828125 c -0.3043812,0.3043287 -0.379905,0.7692719 -0.1875,1.1542968 l 1.4335937,2.8671874 c -0.1885794,0.39394 -0.3554568,0.796828 -0.5,1.208984 l -3.0429687,1.015626 c -0.4084391,0.136264 -0.68381856,0.518648 -0.68359375,0.949218 v 4 c -2.2524e-4,0.43057 0.27515435,0.812955 0.68359375,0.949219 l 3.0527344,1.017578 c 0.1438828,0.407584 0.3090971,0.805606 0.4960937,1.195313 l -1.4394531,2.878906 c -0.1924051,0.385025 -0.1168813,0.849968 0.1875,1.154297 l 2.828125,2.830078 c 0.3043287,0.304381 0.7692719,0.379905 1.1542969,0.1875 l 2.8730466,-1.4375 c 0.391573,0.187086 0.791637,0.352283 1.201172,0.496094 l 1.017578,3.050781 C 13.187045,30.734612 13.56943,31.009991 14,31.009766 h 4 c 0.43057,2.25e-4 0.812955,-0.275154 0.949219,-0.683594 l 1.017578,-3.056641 c 0.406496,-0.143244 0.804637,-0.308036 1.193359,-0.49414 l 2.88086,1.441406 c 0.385025,0.192405 0.849967,0.116881 1.154296,-0.1875 l 2.828126,-2.830078 c 0.304381,-0.304329 0.379905,-0.769272 0.1875,-1.154297 l -1.435547,-2.871094 c 0.188179,-0.392579 0.353616,-0.794395 0.498047,-1.205078 l 3.046874,-1.015625 c 0.40844,-0.136264 0.683819,-0.518649 0.683594,-0.949219 v -4 c 2.25e-4,-0.43057 -0.275155,-0.812954 -0.683594,-0.949218 L 27.271484,12.039062 C 27.127133,11.629665 26.96127,11.229223 26.773438,10.837891 l 1.4375,-2.8750004 c 0.192405,-0.3850249 0.116881,-0.8499681 -0.1875,-1.1542968 L 25.195312,3.9804688 C 24.890983,3.676088 24.426041,3.6005642 24.041016,3.7929688 l -2.865235,1.4316406 c -0.395249,-0.1889764 -0.799375,-0.3552819 -1.21289,-0.5 L 18.949219,1.6835938 C 18.812955,1.2751544 18.43057,0.99977476 18,1 Z m 1.996094,7.9980469 c 3.854148,0 7.005859,3.1516861 7.005859,7.0058591 0,3.854136 -3.151711,6.998047 -7.005859,6.998047 -3.854149,0 -6.9980471,-3.143911 -6.9980471,-6.998047 0,-3.854173 3.1438981,-7.0058591 6.9980471,-7.0058591 z"
@@ -93,17 +101,93 @@
                             enable-background:accumulate" transform="matrix(0.26458333,0,0,0.26458333,0,288.53332)" />
                     </g>
                 </svg>
-            </button>
-            <a id="launch-button" href="steam://rungameid/829590" class="button primary" type="button">
-                Launch
-            </a>
+            </label>
+            <label id="view-switch-icon-mods" class="view-switch icon mods button" for="view-switch-control-mods"
+                role="button">
+                <svg width="16" height="16" class="icon" viewBox="0 0 8.4666669 8.4666669" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#"
+                    xmlns:dc="http://purl.org/dc/elements/1.1/"
+                    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                    xmlns:svg="http://www.w3.org/2000/svg">
+                    <g transform="translate(0,-288.53332)">
+                        <path
+                            d="m 14,1 c -0.43057,-2.2524e-4 -0.812955,0.2751544 -0.949219,0.6835938 l -1.015625,3.046875 c -0.410051,0.1443778 -0.81115,0.3099019 -1.203125,0.4980468 L 7.9589844,3.7929688 c -0.385025,-0.192405 -0.8499682,-0.1168812 -1.1542969,0.1875 l -2.828125,2.828125 c -0.3043812,0.3043287 -0.379905,0.7692719 -0.1875,1.1542968 l 1.4335937,2.8671874 c -0.1885794,0.39394 -0.3554568,0.796828 -0.5,1.208984 l -3.0429687,1.015626 c -0.4084391,0.136264 -0.68381856,0.518648 -0.68359375,0.949218 v 4 c -2.2524e-4,0.43057 0.27515435,0.812955 0.68359375,0.949219 l 3.0527344,1.017578 c 0.1438828,0.407584 0.3090971,0.805606 0.4960937,1.195313 l -1.4394531,2.878906 c -0.1924051,0.385025 -0.1168813,0.849968 0.1875,1.154297 l 2.828125,2.830078 c 0.3043287,0.304381 0.7692719,0.379905 1.1542969,0.1875 l 2.8730466,-1.4375 c 0.391573,0.187086 0.791637,0.352283 1.201172,0.496094 l 1.017578,3.050781 C 13.187045,30.734612 13.56943,31.009991 14,31.009766 h 4 c 0.43057,2.25e-4 0.812955,-0.275154 0.949219,-0.683594 l 1.017578,-3.056641 c 0.406496,-0.143244 0.804637,-0.308036 1.193359,-0.49414 l 2.88086,1.441406 c 0.385025,0.192405 0.849967,0.116881 1.154296,-0.1875 l 2.828126,-2.830078 c 0.304381,-0.304329 0.379905,-0.769272 0.1875,-1.154297 l -1.435547,-2.871094 c 0.188179,-0.392579 0.353616,-0.794395 0.498047,-1.205078 l 3.046874,-1.015625 c 0.40844,-0.136264 0.683819,-0.518649 0.683594,-0.949219 v -4 c 2.25e-4,-0.43057 -0.275155,-0.812954 -0.683594,-0.949218 L 27.271484,12.039062 C 27.127133,11.629665 26.96127,11.229223 26.773438,10.837891 l 1.4375,-2.8750004 c 0.192405,-0.3850249 0.116881,-0.8499681 -0.1875,-1.1542968 L 25.195312,3.9804688 C 24.890983,3.676088 24.426041,3.6005642 24.041016,3.7929688 l -2.865235,1.4316406 c -0.395249,-0.1889764 -0.799375,-0.3552819 -1.21289,-0.5 L 18.949219,1.6835938 C 18.812955,1.2751544 18.43057,0.99977476 18,1 Z m 1.996094,7.9980469 c 3.854148,0 7.005859,3.1516861 7.005859,7.0058591 0,3.854136 -3.151711,6.998047 -7.005859,6.998047 -3.854149,0 -6.9980471,-3.143911 -6.9980471,-6.998047 0,-3.854173 3.1438981,-7.0058591 6.9980471,-7.0058591 z"
+                            style="color:currentColor;
+                            shape-padding:0;
+                            clip-rule:nonzero;
+                            display:inline;
+                            overflow:visible;
+                            visibility:visible;
+                            opacity:1;
+                            isolation:auto;
+                            mix-blend-mode:normal;
+                            color-interpolation:sRGB;
+                            color-interpolation-filters:linearRGB;
+                            solid-color:currentColor;
+                            solid-opacity:1;
+                            vector-effect:none;
+                            fill:currentColor;
+                            fill-opacity:1;
+                            fill-rule:nonzero;
+                            stroke:none;
+                            stroke-width:1.99999988;
+                            stroke-linecap:round;
+                            stroke-linejoin:round;
+                            stroke-miterlimit:4;
+                            stroke-dasharray:none;
+                            stroke-dashoffset:0;
+                            stroke-opacity:1;
+                            paint-order:stroke fill markers;
+                            color-rendering:auto;
+                            image-rendering:auto;
+                            shape-rendering:auto;
+                            text-rendering:auto;
+                            enable-background:accumulate" transform="matrix(0.26458333,0,0,0.26458333,0,288.53332)" />
+                    </g>
+                </svg>
+            </label>
         </section>
     </header>
     <main class="main-content">
-
-        <div id="client-mods" class="mods-section">
-            <form class="search">
-                <label>
+        <div id="mods-view" class="view-switch content mods">
+            <form id="mods-search-form" class="search">
+                <div class="select">
+                    <input id="mod-list-mode-switch-client" name="mod-list-mode-switch" type="radio" value="client"
+                        checked />
+                    <label class="title" for="_mod-list-mode-switch">
+                        client
+                    </label>
+                    <input id="mod-list-mode-switch-server" name="mod-list-mode-switch" type="radio" value="server" />
+                    <label class="title" for="_mod-list-mode-switch">
+                        server
+                    </label>
+                    <input id="mod-list-mode-switch-editor" name="mod-list-mode-switch" type="radio" value="editor" />
+                    <label class="title" for="_mod-list-mode-switch">
+                        editor
+                    </label>
+                    <input id="_mod-list-mode-switch" name="mod-list-mode-switch" class="select-control" type="radio"
+                        value="" />
+                    <ul class="options">
+                        <li>
+                            <label class="option" for="mod-list-mode-switch-client">
+                                client
+                            </label>
+                        </li>
+                        <li>
+                            <label class="option" for="mod-list-mode-switch-server">
+                                server
+                            </label>
+                        </li>
+                        <li>
+                            <label class="option" for="mod-list-mode-switch-editor">
+                                editor
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                <label class="field">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_15_152)">
                             <rect width="24" height="24" fill="white" />
@@ -118,14 +202,36 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="search" placeholder="Filter mods" />
+                    <input id="mod-search-input" type="search" placeholder="Filter mods" />
+                    <button type="submit">
+                        Search
+                    </button>
                 </label>
-                <button type="submit">
-                    Search
-                </button>
             </form>
             <ul id="mod-list" class="mods-list"></ul>
         </div>
+        <form id="config-view" class="view-switch content config field-group" hidden>
+            <label class="field">
+                <span class="title">CryoFall</span>
+                <input id="folderpaths-client-input" type="text" />
+            </label>
+            <label class="field">
+                <span class="title">CryoFall Editor</span>
+                <input id="folderpaths-editor-input" type="text" />
+            </label>
+            <label class="field">
+                <span class="title">CryoFall Server Data</span>
+                <input id="folderpaths-server-input" type="text" />
+            </label>
+            <footer class="actions">
+                <button class="danger" type="reset">
+                    reset
+                </button>
+                <button type="submit">
+                    submit
+                </button>
+            </footer>
+        </form>
         <footer class="main-footer">Copyright (c) LiveGobe & Padreramnt 2024</footer>
     </main>
 

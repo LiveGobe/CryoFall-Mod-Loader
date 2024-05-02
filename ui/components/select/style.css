@@ -1,0 +1,50 @@
+.select {
+    position: relative;
+
+    & .title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 2.5rem;
+        padding: 0 1rem;
+        cursor: pointer;
+        background: whitesmoke;
+        box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
+    }
+
+    & input {
+        display: none;
+    }
+
+    & .options {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+        box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
+        background: whitesmoke;
+        z-index: 2;
+
+        & .option {
+            height: 2.5rem;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            cursor: pointer;
+        }
+    }
+
+    & input:not(:checked)+.title {
+        display: none !important;
+    }
+
+    & .select-control:not(:checked)+.options {
+        visibility: hidden;
+    }
+}
