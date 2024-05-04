@@ -85,7 +85,7 @@ app.whenReady().then(() => {
         const zip = new jszip()
 
         const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-        const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
+        const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod].filter(Boolean)
 
         let mods = [];
         fs.readdirSync(path.join(config.folderpaths[mode], "Mods")).forEach(mod => {

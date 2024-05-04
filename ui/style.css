@@ -7,6 +7,7 @@ html {
     margin: 0;
     padding: 0;
     user-select: none;
+    color: rgba(0, 0, 0, .87);
 }
 
 .main-header {
@@ -118,69 +119,9 @@ html {
     gap: 2rem;
 }
 
-
-button,
-.button {
-    all: unset;
-    height: 2.5rem;
-    line-height: 2.5rem;
-    padding: 0 1rem;
-    background: whitesmoke;
-    box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    & .icon {
-        width: 1.5rem;
-        height: 1.5rem;
-    }
-
-    &.primary {
-        background: #410cd4;
-        color: whitesmoke;
-        box-shadow: 0 0 .125rem 0 rgba(255, 0, 0, 0.4);
-    }
-
-    &.danger {
-        background: color-mix(in srgb, #ff0000 80%, whitesmoke);
-        color: whitesmoke;
-        box-shadow: 0 0 .125rem 0 rgba(255, 0, 0, 0.4);
-    }
-
-    &.disabled,
-    &:disabled,
-    &[disabled] {
-        background: color-mix(in srgb, grey 20%, whitesmoke);
-        cursor: default;
-    }
-}
-
-
 [hidden],
 .hidden {
     display: none !important;
-}
-
-.field {
-    & .title {
-        display: block;
-        font-size: smaller;
-    }
-
-    & input {
-        border: 0;
-        height: 2.5rem;
-        line-height: 2.5rem;
-        padding: 0 .5rem;
-        margin-top: .5rem;
-        width: 100%;
-        box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
-
-        &:focus {
-            outline: none;
-        }
-    }
 }
 
 .actions {
@@ -188,10 +129,4 @@ button,
     flex-direction: row;
     justify-content: flex-end;
     gap: 1rem;
-}
-
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
 }

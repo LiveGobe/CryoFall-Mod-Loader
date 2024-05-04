@@ -30,11 +30,11 @@
         border: 1px solid currentColor;
 
         &.enabled {
-            color: green;
+            color: #326E1A;
         }
 
         &.disabled {
-            color: red;
+            color: #910000;
         }
     }
 
@@ -55,7 +55,7 @@
             color: darkslateblue;
             padding: .125rem;
             border-radius: .125rem;
-            background: rgba(71, 61, 139, 0.2);
+            background: color-mix(in srgb, #4A358C 10%, white);
             flex: none;
             font-weight: lighter;
         }

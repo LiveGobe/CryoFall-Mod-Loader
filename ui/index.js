@@ -11,8 +11,18 @@ const elViewConfigSwitchIcon = getElementById(document, 'view-switch-icon-config
 // modlist
 const elModsView = getElementById(document, 'mods-view')
 const elModListModeSwitchClient = getElementById(document, 'mod-list-mode-switch-client', HTMLInputElement)
+elModListModeSwitchClient.addEventListener('change', () => {
+    elModListModeSwitchOpen.checked = false
+})
 const elModListModeSwitchServer = getElementById(document, 'mod-list-mode-switch-server', HTMLInputElement)
+elModListModeSwitchServer.addEventListener('change', () => {
+    elModListModeSwitchOpen.checked = false
+})
 const elModListModeSwitchEditor = getElementById(document, 'mod-list-mode-switch-editor', HTMLInputElement)
+elModListModeSwitchEditor.addEventListener('change', () => {
+    elModListModeSwitchOpen.checked = false
+})
+const elModListModeSwitchOpen = getElementById(document, '_mod-list-mode-switch', HTMLInputElement)
 
 const elModList = getElementById(document, 'mod-list')
 const elModEntryTemplate = getElementById(document, 'mod-entry-template', HTMLTemplateElement)

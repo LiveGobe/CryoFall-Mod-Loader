@@ -1,0 +1,40 @@
+button,
+.button {
+    all: unset;
+    height: var(--control--height, 2.5rem);
+    line-height: var(--control--height, 2.5rem);
+    padding: 0 var(--control--padding, 1rem);
+    background: #C5CBE9;
+    color: rgba(0, 0, 0, 0.87);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 .25rem 0 color-mix(in srgb, #C5CBE9 40%, white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    & .icon {
+        height: var(--control_icon--height, var(--control_icon--size, 1.5rem));
+        width: var(--control_icon--width, var(--control_icon--size, 1.5rem));
+    }
+
+    &.primary {
+        background: #29379D;
+        color: rgba(255, 255, 255, 0.87);
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 .25rem 0 color-mix(in srgb, #29379D 40%, white);
+    }
+
+    &.danger {
+        background: #7c0000;
+        color: rgba(255, 255, 255, 0.87);
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 .25rem 0 color-mix(in srgb, #7c0000 40%, white);
+    }
+
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        background: color-mix(in srgb, grey 20%, whitesmoke);
+        cursor: default;
+    }
+}

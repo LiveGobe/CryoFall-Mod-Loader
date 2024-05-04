@@ -1,0 +1,63 @@
+.field {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: var(--control--height, 2.5rem);
+
+    & .value,
+    & input,
+    & textarea {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        flex: auto;
+        height: var(--control--height, 2.5rem);
+        line-height: var(--control--height, 2.5rem);
+        padding-right: var(--control--padding-right, var(--control--padding, 1rem));
+        padding-left: var(--control--padding-left, var(--control--padding, 1rem));
+        border: 1px solid #C5CBE9;
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 .25rem 0 color-mix(in srgb, #29379D 40%, white);
+        }
+    }
+
+    & .icon {
+        pointer-events: none;
+        position: absolute;
+        height: var(--control_icon--height, var(--control_icon--size, 1.5rem));
+        width: var(--control_icon--width, var(--control_icon--size, 1.5rem));
+        top: calc((100% - var(--control_icon--height, var(--control_icon--size, 1.5rem))) / 2);
+        left: calc(var(--control--padding-left, var(--control--padding, 1rem)) / 2);
+
+        &~.value,
+        &~input,
+        &~textarea {
+            padding-left: calc(var(--control--padding-left, var(--control--padding, 1rem)) + var(--control_icon--width, var(--control_icon--size, 1.5rem)));
+        }
+    }
+
+    &:has(.title) {
+        height: calc(var(--control--height, 2.5rem) + 1.5rem)
+    }
+    & .title {
+        position: absolute;
+        height: 1rem;
+        font-weight: lighter;
+
+        &~.value,
+        &~input,
+        &~textarea {
+            margin-top: 1.5rem;
+        }
+    }
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2rem;
+}

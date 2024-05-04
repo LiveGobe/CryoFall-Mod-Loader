@@ -7,8 +7,10 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="components/mod-entry/style.css" />
+    <link rel="stylesheet" href="components/field/style.css" />
+    <link rel="stylesheet" href="components/button/style.css" />
     <link rel="stylesheet" href="components/select/style.css" />
+    <link rel="stylesheet" href="components/mod-entry/style.css" />
     <title>CryoFall Mod Loader</title>
     <template id="mod-entry-template">
         <li class="mod-entry">
@@ -21,7 +23,7 @@
             </svg>
             <svg class="status-switch icon disabled" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.837 17.837" xml:space="preserve">
-                <path d="M16.337 1.5 L1.5 16.337 M1.5 1.5 L16.337 16.337" stroke="currentColor" stroke-width="1.5"
+                <path d="M14.337 3 L3 14.337 M3 3 L14.337 14.337" stroke="currentColor" stroke-width="3"
                     stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <header class="header">
@@ -35,8 +37,6 @@
                     <label class="status-switch button" style="flex-direction: column;" type="button">
                         <span class="status-switch title disabled">enable</span>
                         <span class="status-switch title enabled">disable</span>
-                        <span style="position: relative;visibility: hidden;top: 0;left: 0;">enable</span>
-                        <span style="position: relative;visibility: hidden;top: 0;left: 0;">disable</span>
                     </label>
                     <button class="button danger" data-action="deleteMod" type="button">delete</button>
                 </div>
@@ -49,9 +49,58 @@
     <input id="view-switch-control-mods" type="radio" name="view-switch control" value="mods" checked hidden />
     <input id="view-switch-control-config" type="radio" name="view-switch control" value="config" hidden />
     <header class="main-header">
-        <div class="logo">
-            CryoFall Mod Loader
+        <div class="select">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 10 L12 20 L22 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <input id="mod-list-mode-switch-client" name="mod-list-mode-switch" type="radio" value="client" checked />
+            <label class="title" for="_mod-list-mode-switch">
+                client
+            </label>
+            <input id="mod-list-mode-switch-server" name="mod-list-mode-switch" type="radio" value="server" />
+            <label class="title" for="_mod-list-mode-switch">
+                server
+            </label>
+            <input id="mod-list-mode-switch-editor" name="mod-list-mode-switch" type="radio" value="editor" />
+            <label class="title" for="_mod-list-mode-switch">
+                editor
+            </label>
+            <input type="checkbox" id="_mod-list-mode-switch" class="select open" />
+            <ul class="options">
+                <li>
+                    <label class="option" for="mod-list-mode-switch-client">
+                        client
+                    </label>
+                </li>
+                <li>
+                    <label class="option" for="mod-list-mode-switch-server">
+                        server
+                    </label>
+                </li>
+                <li>
+                    <label class="option" for="mod-list-mode-switch-editor">
+                        editor
+                    </label>
+                </li>
+            </ul>
         </div>
+        <label class="field search">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_15_152)">
+                    <rect width="24" height="24" fill="white" />
+                    <circle cx="10.5" cy="10.5" r="6.5" stroke="#000000" stroke-linejoin="round" />
+                    <path
+                        d="M19.6464 20.3536C19.8417 20.5488 20.1583 20.5488 20.3536 20.3536C20.5488 20.1583 20.5488 19.8417 20.3536 19.6464L19.6464 20.3536ZM20.3536 19.6464L15.3536 14.6464L14.6464 15.3536L19.6464 20.3536L20.3536 19.6464Z"
+                        fill="#000000" />
+                </g>
+                <defs>
+                    <clipPath id="clip0_15_152">
+                        <rect width="24" height="24" fill="white" />
+                    </clipPath>
+                </defs>
+            </svg>
+            <input id="mod-search-input" type="search" placeholder="Filter mods" />
+        </label>
         <section class="actions">
             <a id="launch-button" href="steam://rungameid/829590" class="button primary" type="button">
                 Launch
@@ -152,62 +201,6 @@
     </header>
     <main class="main-content">
         <div id="mods-view" class="view-switch content mods">
-            <form id="mods-search-form" class="search">
-                <div class="select">
-                    <input id="mod-list-mode-switch-client" name="mod-list-mode-switch" type="radio" value="client"
-                        checked />
-                    <label class="title" for="_mod-list-mode-switch">
-                        client
-                    </label>
-                    <input id="mod-list-mode-switch-server" name="mod-list-mode-switch" type="radio" value="server" />
-                    <label class="title" for="_mod-list-mode-switch">
-                        server
-                    </label>
-                    <input id="mod-list-mode-switch-editor" name="mod-list-mode-switch" type="radio" value="editor" />
-                    <label class="title" for="_mod-list-mode-switch">
-                        editor
-                    </label>
-                    <input id="_mod-list-mode-switch" name="mod-list-mode-switch" class="select-control" type="radio"
-                        value="" />
-                    <ul class="options">
-                        <li>
-                            <label class="option" for="mod-list-mode-switch-client">
-                                client
-                            </label>
-                        </li>
-                        <li>
-                            <label class="option" for="mod-list-mode-switch-server">
-                                server
-                            </label>
-                        </li>
-                        <li>
-                            <label class="option" for="mod-list-mode-switch-editor">
-                                editor
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-                <label class="field">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_15_152)">
-                            <rect width="24" height="24" fill="white" />
-                            <circle cx="10.5" cy="10.5" r="6.5" stroke="#000000" stroke-linejoin="round" />
-                            <path
-                                d="M19.6464 20.3536C19.8417 20.5488 20.1583 20.5488 20.3536 20.3536C20.5488 20.1583 20.5488 19.8417 20.3536 19.6464L19.6464 20.3536ZM20.3536 19.6464L15.3536 14.6464L14.6464 15.3536L19.6464 20.3536L20.3536 19.6464Z"
-                                fill="#000000" />
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_15_152">
-                                <rect width="24" height="24" fill="white" />
-                            </clipPath>
-                        </defs>
-                    </svg>
-                    <input id="mod-search-input" type="search" placeholder="Filter mods" />
-                    <button type="submit">
-                        Search
-                    </button>
-                </label>
-            </form>
             <ul id="mod-list" class="mods-list"></ul>
         </div>
         <form id="config-view" class="view-switch content config field-group" hidden>
@@ -227,7 +220,7 @@
                 <button class="danger" type="reset">
                     reset
                 </button>
-                <button type="submit">
+                <button class="primary" type="submit">
                     submit
                 </button>
             </footer>
