@@ -121,7 +121,7 @@ app.whenReady().then(() => {
 
             return { success: true }
         } catch (e) {
-            return { success: false, error: e.toString() }
+            return { success: false, errmsg: e.toString() }
         }
     })
 
@@ -138,7 +138,7 @@ app.whenReady().then(() => {
 
             return { success: true }
         } catch (e) {
-            return { success: false, error: e.toString() }
+            return { success: false, errmsg: e.toString() }
         }
     })
 
@@ -146,12 +146,11 @@ app.whenReady().then(() => {
         const parser = new XMLParser({ ignoreAttributes: false })
         const zip = new jszip()
         try {
-            const zipFiles = await zip.loadAsync(mod)
+            const zipFiles = await zip.loadAsync(Buffer.from(mod))
             const fileName = parser.parse(await zipFiles.file("Header.xml").async("string")).root.id
-
             fs.writeFileSync(getModPath(mode, fileName), mod);
         } catch (e) {
-            return { success: false, error: e.toString() }
+            return { success: false, errmsg: e.toString() }
         }
 
         return { success: true }
@@ -162,14 +161,14 @@ app.whenReady().then(() => {
         const zip = new jszip()
 
         try {
-            const file = await (await fetch(link)).arrayBuffer();
+            const buffer = Buffer.from(new Int8Array(await (await fetch(link)).arrayBuffer()));
 
-            const zipFiles = await zip.loadAsync(file)
+            const zipFiles = await zip.loadAsync(buffer)
             const fileName = parser.parse(await zipFiles.file("Header.xml").async("string")).root.id
 
-            fs.writeFileSync(getModPath(mode, fileName), file);
+            fs.writeFileSync(getModPath(mode, fileName), buffer);
         } catch (e) {
-            return { success: false, error: e.toString() }
+            return { success: false, errmsg: e.toString() }
         }
 
         return { success: true }
@@ -183,10 +182,11 @@ app.whenReady().then(() => {
             fs.rmSync(getModPath(mode, modID))
 
             const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
+            modsConfig.mods.mod = (Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]).filter(Boolean)
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
             fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
         } catch (e) {
-            return { sucess: false, error: e.toString() }
+            return { sucess: false, errmsg: e.toString() }
         }
 
         return { success: true }

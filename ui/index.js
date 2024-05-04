@@ -2,6 +2,7 @@
 /// <reference path="../global.d.ts" />
 
 import { cloneElement, getElementById, querySelector } from "../lib/html/index.js"
+import { isInstanceOf } from "./lib/instanceof/index.js"
 
 // view
 const elViewModsSwitchControl = getElementById(document, 'view-switch-control-mods', HTMLInputElement)
@@ -11,27 +12,28 @@ const elViewConfigSwitchIcon = getElementById(document, 'view-switch-icon-config
 // modlist
 const elModsView = getElementById(document, 'mods-view')
 const elModListModeSwitchClient = getElementById(document, 'mod-list-mode-switch-client', HTMLInputElement)
-elModListModeSwitchClient.addEventListener('change', () => {
-    elModListModeSwitchOpen.checked = false
-})
+elModListModeSwitchClient.addEventListener('change', closeModListModeSwitch)
 const elModListModeSwitchServer = getElementById(document, 'mod-list-mode-switch-server', HTMLInputElement)
-elModListModeSwitchServer.addEventListener('change', () => {
-    elModListModeSwitchOpen.checked = false
-})
+elModListModeSwitchServer.addEventListener('change', closeModListModeSwitch)
 const elModListModeSwitchEditor = getElementById(document, 'mod-list-mode-switch-editor', HTMLInputElement)
-elModListModeSwitchEditor.addEventListener('change', () => {
-    elModListModeSwitchOpen.checked = false
-})
+elModListModeSwitchEditor.addEventListener('change', closeModListModeSwitch)
 const elModListModeSwitchOpen = getElementById(document, '_mod-list-mode-switch', HTMLInputElement)
+function closeModListModeSwitch() {
+    elModListModeSwitchOpen.checked = false
+}
 
 const elModList = getElementById(document, 'mod-list')
 const elModEntryTemplate = getElementById(document, 'mod-entry-template', HTMLTemplateElement)
+const elModSearchInput = getElementById(document, 'mod-search-input', HTMLInputElement)
 
 // config
 const elConfigView = getElementById(document, 'config-view', HTMLFormElement)
 const elFolderpathsClientInput = getElementById(document, 'folderpaths-client-input', HTMLInputElement)
 const elFolderpathsEditorInput = getElementById(document, 'folderpaths-editor-input', HTMLInputElement)
 const elFolderpathsServerInput = getElementById(document, 'folderpaths-server-input', HTMLInputElement)
+
+// drag and drop
+const elDropOverlayControl = getElementById(document, 'drop-overlay-control', HTMLInputElement)
 
 function getCurrentView() {
     if (elViewModsSwitchControl.checked) {
@@ -53,7 +55,7 @@ function getCurrentModListMode() {
     if (elModListModeSwitchEditor.checked) {
         return 'editor'
     }
-    return ''
+    return 'client'
 }
 
 // api call
@@ -198,6 +200,12 @@ function renderModList(mode, modsData) {
         // remove rest mod entries
         elModList.childNodes.item(i)?.remove()
     }
+    filterModList()
+}
+
+async function uploadMod(file) {
+    const data = await file.arrayBuffer()
+    return await api.uploadMod(getCurrentModListMode(), new Int8Array(data))
 }
 
 function switchToConfigView() {
@@ -235,6 +243,52 @@ elModListModeSwitchClient.addEventListener('change', loadModsData)
 elModListModeSwitchServer.addEventListener('change', loadModsData)
 elModListModeSwitchEditor.addEventListener('change', loadModsData)
 
+function debounce(callback, ms) {
+    let timerId = -1
+    return (...args) => {
+        if (!~timerId) {
+            window.clearTimeout(timerId)
+        }
+        timerId = window.setTimeout((...args) => {
+            callback(...args)
+            timerId = -1
+        }, ms, ...args)
+    }
+}
+
+function filterModList() {
+    const searchValue = elModSearchInput.value
+    if (searchValue.length < 3) {
+        elModList.querySelectorAll('.mod-entry').forEach(it => {
+            it.classList.remove('hidden')
+        })
+        return
+    }
+    elModList.querySelectorAll('.mod-entry').forEach(it => {
+        const title = querySelector(it, '.title').textContent
+        let found = title?.includes(searchValue) ?? false
+        if (!found) {
+            const description = querySelector(it, '.description').textContent?.toLowerCase()
+            found = description?.includes(searchValue) ?? false
+        }
+        if (!found) {
+            const author = querySelector(it, '.author').textContent?.toLowerCase()
+            found = author?.includes(searchValue) ?? false
+        }
+        it.classList.toggle('hidden', !found)
+    })
+}
+
+const debouncedFilterModList = debounce(filterModList, 1000)
+
+elModSearchInput.addEventListener('input', () => {
+    if (elModList.childElementCount < 20) {
+        filterModList()
+    } else {
+        debouncedFilterModList()
+    }
+})
+
 elConfigView.addEventListener('submit', e => {
     e.preventDefault()
     saveConfig()
@@ -242,6 +296,60 @@ elConfigView.addEventListener('submit', e => {
 elConfigView.addEventListener('reset', e => {
     e.preventDefault()
     loadConfig()
+})
+
+window.addEventListener('dragenter', e => {
+    console.log([...e.dataTransfer?.items ?? []].map(it => ({ kind: it.kind, type: it.type })))
+    if (e.dataTransfer?.types?.includes('Files')) {
+        elDropOverlayControl.checked = true
+        e.preventDefault()
+    }
+})
+window.addEventListener('dragover', e => {
+    if (e.dataTransfer?.types?.includes('Files')) {
+        elDropOverlayControl.checked = true
+        e.preventDefault()
+    }
+})
+window.addEventListener('dragleave', e => {
+    if (!e.relatedTarget) {
+        elDropOverlayControl.checked = false
+        e.preventDefault()
+    }
+})
+window.addEventListener('drop', async e => {
+    elDropOverlayControl.checked = false
+    e.preventDefault()
+    const tasks = [...e.dataTransfer?.files || []].filter(it => it.name.endsWith('.mpk')).map(uploadMod)
+    const resList = await Promise.all(tasks)
+    resList.forEach(res => {
+        if (!res.success) {
+            console.error(res.errmsg)
+        }
+    })
+    loadModsData()
+})
+
+window.addEventListener('paste', async e => {
+    if (!isInstanceOf(ClipboardEvent)(e)) {
+        return
+    }
+
+    const text = e.clipboardData?.getData('text/plain') ?? ''
+    const uploadTasks = []
+    if (/^(https?:)?\/\//.test(text)) {
+        uploadTasks.push(api.uploadModLink(getCurrentModListMode(), text))
+    }
+    [...e.clipboardData?.files || []].filter(it => it.name.endsWith('.mpk')).forEach(it => {
+        uploadTasks.push(uploadMod(it))
+    })
+    const resList = await Promise.all(uploadTasks)
+    resList.forEach(res => {
+        if (!res.success) {
+            console.error(res.errmsg)
+        }
+    })
+    loadModsData()
 })
 
 // load data

@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    height: var(--control--height, 2.5rem);
+    height: var(--control--height);
 
     & .value,
     & input,
@@ -12,10 +12,10 @@
         margin: 0;
         border: 0;
         flex: auto;
-        height: var(--control--height, 2.5rem);
-        line-height: var(--control--height, 2.5rem);
-        padding-right: var(--control--padding-right, var(--control--padding, 1rem));
-        padding-left: var(--control--padding-left, var(--control--padding, 1rem));
+        height: var(--control--height);
+        line-height: var(--control--height);
+        padding-right: var(--control--padding-right);
+        padding-left: var(--control--padding-left);
         border: 1px solid #C5CBE9;
 
         &:focus {
@@ -40,8 +40,9 @@
     }
 
     &:has(.title) {
-        height: calc(var(--control--height, 2.5rem) + 1.5rem)
+        height: calc(var(--control--height) + 1.5rem)
     }
+
     & .title {
         position: absolute;
         height: 1rem;

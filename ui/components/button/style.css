@@ -1,9 +1,9 @@
 button,
 .button {
     all: unset;
-    height: var(--control--height, 2.5rem);
-    line-height: var(--control--height, 2.5rem);
-    padding: 0 var(--control--padding, 1rem);
+    height: var(--control--height);
+    line-height: var(--control--height);
+    padding: 0 var(--control--padding);
     background: #C5CBE9;
     color: rgba(0, 0, 0, 0.87);
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
@@ -13,8 +13,8 @@ button,
     align-items: center;
 
     & .icon {
-        height: var(--control_icon--height, var(--control_icon--size, 1.5rem));
-        width: var(--control_icon--width, var(--control_icon--size, 1.5rem));
+        height: var(--control_icon--height);
+        width: var(--control_icon--width);
     }
 
     &.primary {

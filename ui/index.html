@@ -48,6 +48,7 @@
 <body>
     <input id="view-switch-control-mods" type="radio" name="view-switch control" value="mods" checked hidden />
     <input id="view-switch-control-config" type="radio" name="view-switch control" value="config" hidden />
+    <input id="drop-overlay-control" class="drop-overlay control" type="checkbox" hidden />
     <header class="main-header">
         <div class="select">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -227,7 +228,11 @@
         </form>
         <footer class="main-footer">Copyright (c) LiveGobe & Padreramnt 2024</footer>
     </main>
-
+    <div class="drop-overlay content">
+        <div class="placeholder">
+            Drop files here
+        </div>
+    </div>
 </body>
 <script type="module" src="./index.js"></script>
 
