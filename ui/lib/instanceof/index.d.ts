@@ -1,1 +1,0 @@
-export declare function isInstanceOf<T extends new (...args: any[]) => any>(construcotor: T): (it: unknown) => it is InstanceType<T>

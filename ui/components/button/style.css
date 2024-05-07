@@ -1,9 +1,10 @@
 button,
 .button {
     all: unset;
-    height: var(--control--height);
-    line-height: var(--control--height);
-    padding: 0 var(--control--padding);
+    height: var(--control--height, 2.5rem);
+    line-height: var(--control--height, 2.5rem);
+    padding-left: var(--control--padding-left, var(--control--padding, 1rem));
+    padding-right: var(--control--padding-right, var(--control--padding, 1rem));
     background: #C5CBE9;
     color: rgba(0, 0, 0, 0.87);
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
@@ -12,9 +13,27 @@ button,
     display: flex;
     align-items: center;
 
+    & .title {
+        grid-row: 1;
+        grid-column: title;
+    }
+
+    &:has(.title) {
+        display: grid;
+        grid-template-columns: [title];
+        grid-template-rows: auto;
+    }
+
+    &:has(.icon):not(:has(.title)) {
+        place-content: center;
+        place-items: center;
+        width: var(--control--height, 2.5rem);
+        padding: 0;
+    }
+
     & .icon {
-        height: var(--control_icon--height);
-        width: var(--control_icon--width);
+        height: var(--control_icon--height, var(--control_icon--size, 1.5rem));
+        width: var(--control_icon--width, var(--control_icon--size, 1.5rem));
     }
 
     &.primary {

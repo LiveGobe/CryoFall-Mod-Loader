@@ -1,8 +1,5 @@
-// @ts-check
-/// <reference path="../global.d.ts" />
-
 import { cloneElement, getElementById, querySelector } from "../lib/html/index.js"
-import { isInstanceOf } from "./lib/instanceof/index.js"
+import { isInstanceOf } from "./lib/is-instance-of/index.mjs"
 
 // view
 const elViewModsSwitchControl = getElementById(document, 'view-switch-control-mods', HTMLInputElement)
@@ -21,6 +18,31 @@ const elModListModeSwitchOpen = getElementById(document, '_mod-list-mode-switch'
 function closeModListModeSwitch() {
     elModListModeSwitchOpen.checked = false
 }
+
+// upload mode dialog
+const elUplaodModDialogOpenButton = getElementById(document, 'upload-mod-dialog-open-button', HTMLButtonElement)
+elUplaodModDialogOpenButton.addEventListener('click', () => {
+    elUplaodModDialog.showModal()
+})
+const elUplaodModDialog = getElementById(document, 'upload-mod-dialog', HTMLDialogElement)
+elUplaodModDialog.addEventListener('click', e => {
+    const { target, currentTarget } = e
+    if (target !== currentTarget) {
+        return
+    }
+    const { top, left, bottom, right } = elUplaodModDialog.getBoundingClientRect()
+    const { clientX, clientY } = e
+    const insideVertical = top <= clientY && clientY <= bottom
+    const insideHorizontal = left <= clientX && clientX <= right
+    if (insideVertical && insideHorizontal) {
+        return
+    }
+    elUplaodModDialog.close()
+})
+
+const elUploadModFileInput = getElementById(document, 'upload-mod-file-input', HTMLInputElement)
+const elUploadModLinkForm = getElementById(document, 'upload-mod-link-form', HTMLFormElement)
+const elUploadModLinkInput = getElementById(document, 'upload-mod-link-input', HTMLInputElement)
 
 const elModList = getElementById(document, 'mod-list')
 const elModEntryTemplate = getElementById(document, 'mod-entry-template', HTMLTemplateElement)
@@ -97,7 +119,9 @@ async function loadModsData() {
     if (!currentMode) {
         return
     }
-    const { modsData } = await api.getModsData(currentMode)
+    const { modsData, modsConfig } = await api.getModsData(currentMode)
+    console.log('modsData', modsData)
+    console.log('modsConfig', modsConfig)
     renderModList(currentMode, modsData)
 }
 
@@ -141,6 +165,7 @@ function getModEntryFields(root) {
 }
 
 function renderModEntry(mode, modData) {
+    console.log('render', modData.root.id)
     const currentMode = getCurrentModListMode()
     if (currentMode !== mode) {
         return
@@ -149,6 +174,9 @@ function renderModEntry(mode, modData) {
     if (!root) {
         root = querySelector(cloneElement(elModEntryTemplate.content), '.mod-entry')
         root.setAttribute('data-mod-id', modData.root.id)
+        console.log('create', root)
+    } else {
+        console.log('update', root)
     }
     const elements = getModEntryFields(root)
     if (elements.title.innerText !== modData.root.title) {
@@ -281,6 +309,16 @@ function filterModList() {
 
 const debouncedFilterModList = debounce(filterModList, 1000)
 
+/**
+ * @param {FileList | null} files
+ */
+function uploadFileList(files) {
+    if (!files) {
+        return []
+    }
+    return Array.from(files).filter(it => it.name.endsWith('.mpk')).map(async data => api.uploadMod(getCurrentModListMode(), new Int8Array(await data.arrayBuffer())))
+}
+
 elModSearchInput.addEventListener('input', () => {
     if (elModList.childElementCount < 20) {
         filterModList()
@@ -299,6 +337,9 @@ elConfigView.addEventListener('reset', e => {
 })
 
 window.addEventListener('dragenter', e => {
+    if (elUplaodModDialog.open) {
+        return
+    }
     console.log([...e.dataTransfer?.items ?? []].map(it => ({ kind: it.kind, type: it.type })))
     if (e.dataTransfer?.types?.includes('Files')) {
         elDropOverlayControl.checked = true
@@ -306,18 +347,27 @@ window.addEventListener('dragenter', e => {
     }
 })
 window.addEventListener('dragover', e => {
+    if (elUplaodModDialog.open) {
+        return
+    }
     if (e.dataTransfer?.types?.includes('Files')) {
         elDropOverlayControl.checked = true
         e.preventDefault()
     }
 })
 window.addEventListener('dragleave', e => {
+    if (elUplaodModDialog.open) {
+        return
+    }
     if (!e.relatedTarget) {
         elDropOverlayControl.checked = false
         e.preventDefault()
     }
 })
 window.addEventListener('drop', async e => {
+    if (elUplaodModDialog.open) {
+        return
+    }
     elDropOverlayControl.checked = false
     e.preventDefault()
     const tasks = [...e.dataTransfer?.files || []].filter(it => it.name.endsWith('.mpk')).map(uploadMod)
@@ -332,6 +382,9 @@ window.addEventListener('drop', async e => {
 
 window.addEventListener('paste', async e => {
     if (!isInstanceOf(ClipboardEvent)(e)) {
+        return
+    }
+    if (elUplaodModDialog.open) {
         return
     }
 
@@ -350,6 +403,39 @@ window.addEventListener('paste', async e => {
         }
     })
     loadModsData()
+})
+
+elUploadModLinkForm.addEventListener('submit', async e => {
+    e.preventDefault()
+    const res = await api.uploadModLink(getCurrentModListMode(), elUploadModLinkInput.value)
+    if (!res.success) {
+        console.error(res.errmsg)
+        return
+    }
+    loadModsData()
+    elUploadModLinkInput.value = ''
+    elUplaodModDialog.close()
+})
+
+elUploadModLinkInput.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.key !== 'Escape') {
+        return
+    }
+    e.preventDefault()
+    elUploadModLinkInput.value = ''
+})
+
+elUploadModFileInput.addEventListener('change', async () => {
+    const uploadTaskList = uploadFileList(elUploadModFileInput.files)
+    const resList = await Promise.all(uploadTaskList)
+    resList.forEach(res => {
+        if (!res.success) {
+            console.error(res.errmsg)
+        }
+    })
+    loadModsData()
+    elUploadModFileInput.value = null
+    elUplaodModDialog.close()
 })
 
 // load data

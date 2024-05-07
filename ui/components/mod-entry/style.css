@@ -17,7 +17,7 @@
         &:checked~* .status-switch.title.disabled,
         &:not(:checked)~.status-switch.icon.enabled,
         &:not(:checked)~* .status-switch.title.enabled {
-            display: none !important;
+            visibility: hidden;
         }
     }
 

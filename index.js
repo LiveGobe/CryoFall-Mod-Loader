@@ -3,6 +3,8 @@ const { XMLParser, XMLBuilder } = require("fast-xml-parser")
 const jszip = require("jszip")
 const path = require("node:path")
 const fs = require("node:fs")
+const { isObject } = require("./ui/lib/is-object/index.js")
+const { isString } = require("./ui/lib/is-string/index.js")
 
 try {
     require('electron-reloader')(module, { debug: true, watchRenderer: true })
@@ -61,6 +63,30 @@ const main = () => {
     win.loadFile("ui/index.html")
 }
 
+function fixModsConfig(modsConfig) {
+    if (!isObject(modsConfig) || !isObject(modsConfig['?xml'])) {
+        modsConfig = {
+            '?xml': {
+                '@_version': '1.0',
+                '@_encoding': 'utf-8',
+                '@_standalone': 'yes',
+            },
+        }
+    }
+    if (!isObject(modsConfig.mods)) {
+        modsConfig.mods = {}
+    }
+    const modList = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
+    modsConfig.mods.mod = modList.filter(isString)
+    return modsConfig
+}
+
+function readModsConfigSync(filepath) {
+    const parser = new XMLParser({ ignoreAttributes: false })
+    const res = parser.parse(fs.readFileSync(filepath))
+    return fixModsConfig(res)
+}
+
 app.whenReady().then(() => {
     ipcMain.handle("api:loadConfig", () => loadConfigJson())
 
@@ -82,21 +108,20 @@ app.whenReady().then(() => {
 
     ipcMain.handle("api:getModsData", async (_, mode) => {
         const parser = new XMLParser({ ignoreAttributes: false })
-        const zip = new jszip()
 
-        const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-        const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod].filter(Boolean)
+        const modsConfig = readModsConfigSync(getModsConfigPath(mode))
 
         let mods = [];
         fs.readdirSync(path.join(config.folderpaths[mode], "Mods")).forEach(mod => {
             if (!mod.endsWith(".mpk")) return
             mods.push(new Promise((resolve, reject) => {
                 const buffer = fs.readFileSync(path.join(config.folderpaths[mode], "Mods", mod))
+                const zip = new jszip()
                 zip.loadAsync(buffer).then(zipFiles => {
                     zipFiles.file("Header.xml").async("string").then(readMod => {
                         const parsedMod = parser.parse(readMod)
-
-                        parsedMod.root.enabled = enabledMods.find(i => i.startsWith(parsedMod.root.id)) ? true : false
+                        parsedMod.root.fileName = path.join(config.folderpaths[mode], "Mods", mod)
+                        parsedMod.root.enabled = modsConfig.mods.mod.find(i => i.startsWith(parsedMod.root.id)) ? true : false
                         resolve(parsedMod)
                     })
                 })
@@ -107,13 +132,10 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("api:setModEnabled", (_, mode, modID) => {
-        const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
-            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-            const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
-            modsConfig.mods.mod = enabledMods
+            const modsConfig = readModsConfigSync(getModsConfigPath(mode))
             if (!modsConfig.mods.mod.includes(modID)) {
                 modsConfig.mods.mod.push(modID);
             }
@@ -126,13 +148,10 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("api:setModDisabled", (_, mode, modID) => {
-        const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
-            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-            const enabledMods = Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]
-            modsConfig.mods.mod = enabledMods
+            const modsConfig = readModsConfigSync(getModsConfigPath(mode))
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
             fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
 
@@ -175,14 +194,12 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle("api:deleteMod", (_, mode, modID) => {
-        const parser = new XMLParser({ ignoreAttributes: false })
         const builder = new XMLBuilder({ ignoreAttributes: false, format: true })
 
         try {
             fs.rmSync(getModPath(mode, modID))
 
-            const modsConfig = parser.parse(fs.readFileSync(getModsConfigPath(mode)))
-            modsConfig.mods.mod = (Array.isArray(modsConfig.mods.mod) ? modsConfig.mods.mod : [modsConfig.mods.mod]).filter(Boolean)
+            const modsConfig = readModsConfigSync(getModsConfigPath(mode))
             modsConfig.mods.mod.splice(modsConfig.mods.mod.findIndex(i => i.split("_")[0] == modID), 1)
             fs.writeFileSync(getModsConfigPath(mode), builder.build(modsConfig))
         } catch (e) {
