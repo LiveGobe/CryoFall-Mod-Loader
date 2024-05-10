@@ -5,15 +5,25 @@ import { Mod } from "./api/mod"
 import { ModList } from "./api/mods"
 import { ModsConfig } from "./api/mods-config"
 
-try {
-    module.filename = __filename
-    require('electron-reloader')(module, { debug: true, watchRenderer: true })
-} catch (e) {
-    console.error(e)
+if (process.env.NODE_ENV !== 'production') {
+    try {
+        module.filename = __filename
+        require('electron-reloader')(module, { debug: true, watchRenderer: true })
+    } catch (e) {
+        console.error(e)
+    }
 }
 
 const main = () => {
-    const win = new BrowserWindow({ width: 1600, height: 1000, webPreferences: { preload: path.join(process.cwd(), "preload.js") }, autoHideMenuBar: true })
+    const win = new BrowserWindow({
+        width: 1600,
+        height: 1000,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            nodeIntegration: true,
+        },
+        autoHideMenuBar: true,
+    })
     win.loadFile("ui/index.html")
 }
 

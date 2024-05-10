@@ -7,8 +7,9 @@
     "tsc": "tsc",
     "watch": "webpack --watch --progress",
     "start": "electron-forge start",
-    "prepackage": "webpack --progress",
+    "prepackage": "webpack --progress --mode=production",
     "package": "electron-forge package",
+    "premake": "webpack --progress --mode=production",
     "make": "electron-forge make"
   },
   "author": "LiveGobe",

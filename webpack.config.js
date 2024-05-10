@@ -31,6 +31,9 @@ exports.default = [
             asyncChunks: true,
             chunkFilename: '[name].[id].js',
             chunkLoading: 'import',
+            clean: {
+                keep: /^(server|preload)/,
+            },
         },
         plugins: [...optionalPlugins]
     },
@@ -59,6 +62,40 @@ exports.default = [
         output: {
             filename: 'server.js',
             path: path.resolve(__dirname, 'build'),
+            clean: {
+                keep: /^(client|preload)/,
+            },
+        },
+        plugins: [...optionalPlugins]
+    },
+    {
+        name: 'preload',
+        target: 'node',
+        entry: './preload.js',
+        devtool: 'source-map',
+        mode: 'development',
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/,
+                },
+            ],
+        },
+        externals: {
+            electron: 'commonjs electron',
+            'electron-reloader': 'commonjs electron-reloader',
+        },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js'],
+        },
+        output: {
+            filename: 'preload.js',
+            path: path.resolve(__dirname, 'build'),
+            clean: {
+                keep: /^(client|server)/,
+            },
         },
         plugins: [...optionalPlugins]
     }

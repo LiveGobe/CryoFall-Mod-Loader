@@ -5,9 +5,11 @@ import { pathJoin } from "../lib/path-join"
 import { pathResolve } from "../lib/path-resolve"
 import { fsReadFile } from '../lib/read-file'
 import { fsWriteFile } from '../lib/write-file'
+import { homedir } from 'node:os'
+import { app } from 'electron'
 
 async function getDefaultDirs() {
-    const homeDir = process.env.HOME ?? ''
+    const homeDir = homedir()
     const oneDriveDir = process.env.OneDrive ?? ''
     const clientDir = pathJoin(homeDir, DocumentsDir, AtomicTorchStudioDir, CryoFallDir)
     const editorDir = pathJoin(homeDir, DocumentsDir, AtomicTorchStudioDir, CryoFallEditorDir)
@@ -34,7 +36,7 @@ async function getDefaultDirs() {
 export const Config = {
     async load(): Promise<CryoFallModLoader.Result<CryoFallModLoader.Config.ConfigData>> {
         try {
-            const fileName = pathResolve(process.cwd(), 'config.json')
+            const fileName = pathResolve(app.getAppPath(), 'config.json')
             const exists = await isFile(fileName)
             let payload: CryoFallModLoader.Config.ConfigData | undefined
             if (exists) {
@@ -76,7 +78,7 @@ export const Config = {
         }
     },
     async save(data: CryoFallModLoader.Config.ConfigData) {
-        const fileName = pathResolve(process.cwd(), 'config.json')
+        const fileName = pathResolve(app.getAppPath(), 'config.json')
         try {
             await fsWriteFile(fileName, JSON.stringify(data, null, 2))
             return {

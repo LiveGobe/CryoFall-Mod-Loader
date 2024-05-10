@@ -18,9 +18,9 @@ contextBridge.exposeInMainWorld("CryoFallModLoader", {
         saveFromUrl(...args) { return ipcRenderer.invoke('CryoFallModLoader.Mod.saveFromUrl', ...args) },
     },
     ModList: {
-        load(...args) { console.log('load', ...args); return ipcRenderer.invoke('CryoFallModLoader.ModList.load', ...args) },
-        enable(...args) { console.log('enable', ...args); return ipcRenderer.invoke('CryoFallModLoader.ModList.enable', ...args) },
-        disable(...args) { console.log('disable', ...args); return ipcRenderer.invoke('CryoFallModLoader.ModList.disable', ...args) },
-        delete(...args) { console.log('delete', ...args); return ipcRenderer.invoke('CryoFallModLoader.ModList.delete', ...args) },
+        load(...args) { return ipcRenderer.invoke('CryoFallModLoader.ModList.load', ...args) },
+        enable(...args) { return ipcRenderer.invoke('CryoFallModLoader.ModList.enable', ...args) },
+        disable(...args) { return ipcRenderer.invoke('CryoFallModLoader.ModList.disable', ...args) },
+        delete(...args) { return ipcRenderer.invoke('CryoFallModLoader.ModList.delete', ...args) },
     },
 });
