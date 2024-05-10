@@ -211,7 +211,10 @@ dialog::backdrop {
 }
 
 #view-switch-control-mods:not(:checked)~* #mods-view,
+#view-switch-control-mods:checked~* #view-switch-icon-mods,
 #view-switch-control-config:not(:checked)~* #config-view,
+#view-switch-control-config:checked~* #view-switch-icon-config,
+#view-switch-control-mod:checked~* #view-switch-icon-mods,
 #view-switch-control-mod:not(:checked)~* #mod-view {
     display: none;
 }
@@ -293,9 +296,12 @@ dialog::backdrop {
             width: calc(100% - 2rem);
         }
 
-        & .title {
+        & > * {
             position: relative;
             z-index: 1;
+        }
+
+        & .title {
             flex: auto;
             font-weight: bolder;
             overflow: hidden;
@@ -304,8 +310,6 @@ dialog::backdrop {
         }
 
         & .version {
-            position: relative;
-            z-index: 1;
             color: darkslateblue;
             padding: .125rem;
             border-radius: .125rem;

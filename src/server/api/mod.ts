@@ -55,7 +55,6 @@ export const Mod = {
             const zip = new jszip()
             const zipFiles = await zip.loadAsync(buffer)
             const headerXmlContent = await zipFiles.file("Header.xml")?.async('string')
-            console.log('headerXmlContent', headerXmlContent)
             if (!headerXmlContent) {
                 throw new Error(`unable parse mod package header file`)
             }

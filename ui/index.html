@@ -128,7 +128,7 @@
                 </svg>
             </button>
             <label id="view-switch-icon-config" class="view-switch icon config button" for="view-switch-control-config"
-                role="button" hidden>
+                role="button">
                 <svg width="16" height="16" class="icon" viewBox="0 0 8.4666669 8.4666669" version="1.1">
                     <g transform="translate(0,-288.53332)">
                         <path
@@ -217,7 +217,7 @@
                 No installed mods, drop or paste <b>.mpk</b> file
             </div>
         </div>
-        <form id="config-view" class="view-switch content config field-group" hidden>
+        <form id="config-view" class="view-switch content config field-group">
             <label class="field">
                 <span class="title">CryoFall</span>
                 <input id="config-client-dir-input" type="text" />
@@ -242,6 +242,9 @@
         <div id="mod-view">
             <input type="checkbox" class="status-switch control" hidden />
             <header class="header">
+                <label for="view-switch-control-mods">
+                    &lt;&lt; back
+                </label>
                 <span class="title" data-bind="title"></span>
                 <span class="version">1.0.1</span>
             </header>

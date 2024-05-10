@@ -160,9 +160,7 @@ export async function initModListView() {
         ModListLoadEvent.dispatch(e.launchType)
     })
 
-    ModListLoadEvent.on(console.log.bind(console))
     ModListLoadEvent.on(debouncedFilterModList.cancel)
-    ModListLoadDoneEvent.on(console.log.bind(console))
     ModListLoadDoneEvent.on(e => {
         renderModList(e.launchType, e.payload)
         renderModListError(e.launchType, null)
