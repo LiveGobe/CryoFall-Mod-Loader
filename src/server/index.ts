@@ -5,6 +5,10 @@ import { Mod } from "./api/mod"
 import { ModList } from "./api/mods"
 import { ModsConfig } from "./api/mods-config"
 
+if (require('electron-squirrel-startup')) {
+    app.quit()
+}
+
 if (process.env.NODE_ENV !== 'production') {
     try {
         module.filename = __filename

@@ -55,6 +55,7 @@ exports.default = [
         externals: {
             electron: 'commonjs electron',
             'electron-reloader': 'commonjs electron-reloader',
+            'electron-squirrel-startup': 'commonjs electron-squirrel-startup',
         },
         resolve: {
             extensions: ['.tsx', '.ts', '.js'],
@@ -86,6 +87,7 @@ exports.default = [
         externals: {
             electron: 'commonjs electron',
             'electron-reloader': 'commonjs electron-reloader',
+            'electron-squirrel-startup': 'commonjs electron-squirrel-startup',
         },
         resolve: {
             extensions: ['.tsx', '.ts', '.js'],
