@@ -40,7 +40,6 @@ type NotificationPrivates = {
 const vtable = new WeakMap<Element, NotificationPrivates>()
 
 export function createNotification(intent: NotificationIntent, data: NotificationData) {
-    console.log('createNotification', intent, data)
     const id = '_' + crypto.randomUUID()
     const fragment = cloneElement(notificationEntryTemplate.content)
     const node = querySelector(fragment, '.notification-entry')

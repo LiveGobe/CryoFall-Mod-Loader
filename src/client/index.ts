@@ -22,7 +22,6 @@ window.addEventListener('dragenter', e => {
     if (el.uploadModDialog.open) {
         return
     }
-    console.log([...e.dataTransfer?.items ?? []].map(it => ({ kind: it.kind, type: it.type })))
     if (e.dataTransfer?.types?.includes('Files')) {
         el.dropOverlayControl.checked = true
         e.preventDefault()
