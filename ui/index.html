@@ -26,15 +26,15 @@
                 <path d="M14.337 3 L3 14.337 M3 3 L14.337 14.337" stroke="currentColor" stroke-width="3"
                     stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <header class="header">
-                <span class="title" data-bind="title"></span>
+            <label for="view-switch-control-mod" role="link" class="header">
+                <span class="title"></span>
                 <span class="version"></span>
-            </header>
+            </label>
             <section class="description"></section>
             <footer class="footer">
                 <span class="author"></span>
                 <div class="actions">
-                    <label class="status-switch button" style="flex-direction: column;" type="button">
+                    <label class="status-switch button" style="flex-direction: column;" role="button">
                         <span class="status-switch title disabled">enable</span>
                         <span class="status-switch title enabled">disable</span>
                     </label>
@@ -43,43 +43,58 @@
             </footer>
         </li>
     </template>
+    <template id="notification-entry-template">
+        <li class="notification-entry">
+            <div class="title"></div>
+            <div class="description"></div>
+            <div class="actions">
+                <button type="button" class="retry">
+                    retry
+                </button>
+                <button type="button" class="dismiss">
+                    dismiss
+                </button>
+            </div>
+        </li>
+    </template>
 </head>
 
 <body>
     <input id="view-switch-control-mods" type="radio" name="view-switch control" value="mods" checked hidden />
     <input id="view-switch-control-config" type="radio" name="view-switch control" value="config" hidden />
+    <input id="view-switch-control-mod" type="radio" name="view-switch control" value="mod" hidden />
     <input id="drop-overlay-control" class="drop-overlay control" type="checkbox" hidden />
     <header class="main-header">
         <div class="select">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 10 L12 20 L22 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <input id="mod-list-mode-switch-client" name="mod-list-mode-switch" type="radio" value="client" checked />
-            <label class="title" for="_mod-list-mode-switch">
+            <input id="launch-type-client" name="launch-type-switch" type="radio" value="client" checked />
+            <label class="title" for="_launch-type">
                 client
             </label>
-            <input id="mod-list-mode-switch-server" name="mod-list-mode-switch" type="radio" value="server" />
-            <label class="title" for="_mod-list-mode-switch">
+            <input id="launch-type-server" name="launch-type-switch" type="radio" value="server" />
+            <label class="title" for="_launch-type">
                 server
             </label>
-            <input id="mod-list-mode-switch-editor" name="mod-list-mode-switch" type="radio" value="editor" />
-            <label class="title" for="_mod-list-mode-switch">
+            <input id="launch-type-editor" name="launch-type-switch" type="radio" value="editor" />
+            <label class="title" for="_launch-type">
                 editor
             </label>
-            <input type="checkbox" id="_mod-list-mode-switch" class="select open" />
+            <input type="checkbox" id="_launch-type" class="select open" />
             <ul class="options">
                 <li>
-                    <label class="option" for="mod-list-mode-switch-client">
+                    <label class="option" for="launch-type-client">
                         client
                     </label>
                 </li>
                 <li>
-                    <label class="option" for="mod-list-mode-switch-server">
+                    <label class="option" for="launch-type-server">
                         server
                     </label>
                 </li>
                 <li>
-                    <label class="option" for="mod-list-mode-switch-editor">
+                    <label class="option" for="launch-type-editor">
                         editor
                     </label>
                 </li>
@@ -196,20 +211,24 @@
     </header>
     <main class="main-content">
         <div id="mods-view" class="view-switch content mods">
-            <ul id="mod-list" class="mods-list"></ul>
+            <ul id="mod-list" class="mod-list"></ul>
+            <div id="mod-list--error" class="mod-list--error"></div>
+            <div id="mod-list--empty" class="mod-list--empty">
+                No installed mods, drop or paste <b>.mpk</b> file
+            </div>
         </div>
         <form id="config-view" class="view-switch content config field-group" hidden>
             <label class="field">
                 <span class="title">CryoFall</span>
-                <input id="folderpaths-client-input" type="text" />
+                <input id="config-client-dir-input" type="text" />
             </label>
             <label class="field">
                 <span class="title">CryoFall Editor</span>
-                <input id="folderpaths-editor-input" type="text" />
+                <input id="config-editor-dir-input" type="text" />
             </label>
             <label class="field">
                 <span class="title">CryoFall Server Data</span>
-                <input id="folderpaths-server-input" type="text" />
+                <input id="config-server-dir-input" type="text" />
             </label>
             <footer class="actions">
                 <button class="danger" type="reset">
@@ -220,10 +239,28 @@
                 </button>
             </footer>
         </form>
+        <div id="mod-view">
+            <input type="checkbox" class="status-switch control" hidden />
+            <header class="header">
+                <span class="title" data-bind="title"></span>
+                <span class="version">1.0.1</span>
+            </header>
+            <section class="description"></section>
+            <footer class="footer">
+                <span class="author"></span>
+                <div class="actions">
+                    <label class="status-switch button" style="flex-direction: column;" type="button">
+                        <span class="status-switch title disabled">enable</span>
+                        <span class="status-switch title enabled">disable</span>
+                    </label>
+                    <button class="button danger" data-action="deleteMod" type="button">delete</button>
+                </div>
+            </footer>
+        </div>
         <footer class="main-footer">Copyright (c) LiveGobe & Padreramnt 2024</footer>
     </main>
     <div class="drop-overlay content">
-        <div class="dropzone">
+        <div class="field dropzone">
             Drop .mpk files here
         </div>
     </div>
@@ -245,7 +282,8 @@
             </button>
         </form>
     </dialog>
+    <ul id="notification-list" class="notification-list"></ul>
+    <script type="module" src="../build/client.js"></script>
 </body>
-<script type="module" src="./index.js"></script>
 
 </html>

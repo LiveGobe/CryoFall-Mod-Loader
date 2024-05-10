@@ -2,8 +2,10 @@
   "name": "cryofall-mod-loader",
   "version": "0.0.1",
   "description": "A mod loader for CryoFall",
-  "main": "index.js",
+  "main": "build/server.js",
   "scripts": {
+    "tsc": "tsc",
+    "watch": "webpack --watch --progress",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -14,14 +16,20 @@
     "@electron-forge/cli": "^7.4.0",
     "@electron-forge/maker-squirrel": "^7.4.0",
     "electron": "^30.0.1",
-    "electron-reloader": "^1.2.3"
+    "electron-reloader": "^1.2.3",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "fast-xml-parser": "^4.3.6",
     "jszip": "^3.10.1",
-    "rollup": "^4.17.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-loader": "^9.5.1",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0"
   }
 }
