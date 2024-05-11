@@ -127,4 +127,7 @@ dist
 .pnp.*
 
 build
+server.js
+client.js
+preload.js
 config.json
