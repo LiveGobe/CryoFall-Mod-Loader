@@ -9,7 +9,6 @@ declare global {
     }
 }
 
-
 export class ModListDisableEvent extends Event {
     static integrityId: string | undefined
     static async dispatch(launchType: CryoFallModLoader.LaunchType, modId: string) {

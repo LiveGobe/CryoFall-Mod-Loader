@@ -1,9 +1,9 @@
-import { getElementById } from "../lib/get-element-by-id"
-import { querySelector } from "../lib/query-selector"
-import { ModListDeleteDoneEvent, ModListDeleteEvent } from "./api/mod-list/delete"
-import { ModListDisableEvent } from "./api/mod-list/disable"
-import { ModListEnableEvent } from "./api/mod-list/enable"
-import { getCurrentLaunchType, setCurrentView, ViewType } from "./app"
+import { getElementById } from "../../lib/get-element-by-id"
+import { querySelector } from "../../lib/query-selector"
+import { ModListDeleteDoneEvent, ModListDeleteEvent } from "../api/mod-list/delete"
+import { ModListDisableEvent } from "../api/mod-list/disable"
+import { ModListEnableEvent } from "../api/mod-list/enable"
+import { getCurrentLaunchType, setCurrentView, ViewType } from "../app"
 
 const modView = getElementById(document, 'mod-view')
 

@@ -1,14 +1,14 @@
-import { cloneElement } from "../lib/clone-element"
-import { debounce } from "../lib/debounce"
-import { getElementById } from "../lib/get-element-by-id"
-import { querySelector } from "../lib/query-selector"
-import { ModListDeleteDoneEvent, ModListDeleteEvent, ModListDeleteFailEvent } from "./api/mod-list/delete"
-import { ModListDisableDoneEvent, ModListDisableEvent, ModListDisableFailEvent } from "./api/mod-list/disable"
-import { ModListEnableDoneEvent, ModListEnableEvent, ModListEnableFailEvent } from "./api/mod-list/enable"
-import { ModListLoadDoneEvent, ModListLoadEvent, ModListLoadFailEvent } from "./api/mod-list/load"
-import { getCurrentLaunchType, LaunchTypeChangeEvent } from "./app"
+import { cloneElement } from "../../lib/clone-element"
+import { debounce } from "../../lib/debounce"
+import { getElementById } from "../../lib/get-element-by-id"
+import { querySelector } from "../../lib/query-selector"
+import { ModListDeleteDoneEvent, ModListDeleteEvent, ModListDeleteFailEvent } from "../api/mod-list/delete"
+import { ModListDisableDoneEvent, ModListDisableEvent, ModListDisableFailEvent } from "../api/mod-list/disable"
+import { ModListEnableDoneEvent, ModListEnableEvent, ModListEnableFailEvent } from "../api/mod-list/enable"
+import { ModListLoadDoneEvent, ModListLoadEvent, ModListLoadFailEvent } from "../api/mod-list/load"
+import { getCurrentLaunchType, LaunchTypeChangeEvent } from "../app"
 import { renderMod } from "./mod"
-import { createNotification } from "./notification-list"
+import { createNotification } from "../notification-list"
 
 const modList = getElementById(document, 'mod-list')
 const modListError = getElementById(document, 'mod-list--error')
@@ -157,7 +157,7 @@ export function filterModList() {
 
 export async function initModListView() {
     LaunchTypeChangeEvent.on(e => {
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
 
     ModListLoadEvent.on(debouncedFilterModList.cancel)
@@ -172,38 +172,38 @@ export async function initModListView() {
 
     ModListDeleteEvent.on(debouncedFilterModList.cancel)
     ModListDeleteDoneEvent.on(e => {
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
     ModListDeleteFailEvent.on(e => {
         createNotification('error', {
             title: 'Delete failed',
             description: e.error,
         })
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
 
     ModListEnableEvent.on(debouncedFilterModList.cancel)
     ModListEnableDoneEvent.on(e => {
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
     ModListEnableFailEvent.on(e => {
         createNotification('error', {
             title: 'Enable failed',
             description: e.error,
         })
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
 
     ModListDisableEvent.on(debouncedFilterModList.cancel)
     ModListDisableDoneEvent.on(e => {
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
     ModListDisableFailEvent.on(e => {
         createNotification('error', {
             title: 'Disable failed',
             description: e.error,
         })
-        ModListLoadEvent.dispatch(e.launchType)
+        ModListLoadEvent.dispatch()
     })
-    await ModListLoadEvent.dispatch(getCurrentLaunchType())
+    await ModListLoadEvent.dispatch()
 }

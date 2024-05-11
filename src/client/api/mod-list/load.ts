@@ -1,3 +1,5 @@
+import { getCurrentLaunchType } from "../../app"
+
 declare global {
     interface Window {
         addEventListener(eventName: 'cfml.mod-list.load', handler: (this: Window, ev: ModListLoadEvent) => any): void
@@ -9,11 +11,11 @@ declare global {
     }
 }
 
-
 export class ModListLoadEvent extends Event {
     static integrityId: string | undefined
-    static async dispatch(launchType: CryoFallModLoader.LaunchType) {
+    static async dispatch() {
         ModListLoadEvent.integrityId = crypto.randomUUID()
+        const launchType = getCurrentLaunchType()
         const actionEvent = new ModListLoadEvent(ModListLoadEvent.integrityId, launchType)
         if (!window.dispatchEvent(actionEvent)) {
             return
