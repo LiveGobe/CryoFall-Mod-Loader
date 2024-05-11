@@ -2,22 +2,21 @@
   "name": "cryofall-mod-loader",
   "version": "0.0.1",
   "description": "A mod loader for CryoFall",
-  "main": "build/server.js",
+  "main": "server.js",
   "scripts": {
     "tsc": "tsc",
     "watch": "webpack --watch --progress",
     "start": "electron-forge start",
-    "prepackage": "webpack --progress --mode=production",
-    "package": "electron-forge package",
-    "premake": "webpack --progress --mode=production",
-    "make": "electron-forge make"
+    "prebuild": "webpack --progress --mode=production",
+    "build": "electron-builder -c electron-builder.json"
   },
-  "author": "LiveGobe",
+  "author": "LiveGobe & Padreramnt",
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
     "@electron-forge/maker-squirrel": "^7.4.0",
     "electron": "^30.0.1",
+    "electron-builder": "^24.13.3",
     "electron-reloader": "^1.2.3",
     "webpack-cli": "^5.1.4"
   },
