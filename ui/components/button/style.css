@@ -25,12 +25,10 @@ button {
     box-sizing: border-box;
     height: 40px;
     display: inline-grid;
-    grid-template-columns: auto;
     grid-template-rows: 1fr;
-    place-content: center;
-    place-items: center;
+    align-items: center;
     padding: 0 10px;
-
+    gap: 10px;
     background:
         var(--button-background-top),
         var(--button-background-bottom),
@@ -40,14 +38,26 @@ button {
     box-shadow: 0 0 2px 0 var(--button-border-color);
 
     & .icon {
-        display: flex;
+        display: inline-flex;
         width: 20px;
         height: 20px;
+        grid-row: 1;
+        grid-column: icon;
     }
 
     & .title {
         grid-row: 1;
         grid-column: title;
+    }
+
+    &:has(.icon) {
+        grid-template-areas: "icon";
+    }
+    &:has(.title) {
+        grid-template-areas: "title";
+    }
+    &:has(.icon):has(.title) {
+        grid-template-areas: "icon title";
     }
 
     &:hover {
@@ -61,4 +71,27 @@ button {
     &:disabled {
         cursor: default;
     }
+}
+
+.checkbox {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    --button-background-top--image: linear-gradient(to bottom,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-bottom--image: linear-gradient(to top,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-top--height: 25px;
+    --button-background-bottom--height: 25px;
+    --button-background-top: top left/100% var(--button-background-top--height) var(--button-background-top--image) no-repeat;
+    --button-background-bottom: bottom left/100% var(--button-background-bottom--height) var(--button-background-bottom--image) no-repeat;
+    background:
+        var(--button-background-top),
+        var(--button-background-bottom),
+        var(--button-background-color);
+    border: .75px solid var(--button-border-color);
+    border-radius: 4px;
+    box-shadow: 0 0 2px 0 var(--button-border-color);
 }
