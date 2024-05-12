@@ -2,12 +2,34 @@
   "name": "cryofall-mod-loader",
   "version": "0.0.1",
   "description": "A mod loader for CryoFall",
-  "main": "server.js",
+  "main": "./build/server.js",
+  "build": {
+    "files": [
+      "package.json",
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "ui",
+        "to": "ui",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
   "scripts": {
-    "tsc": "tsc",
+    "clean:build": "rimraf -r -f ./build",
+    "clean:out": "rimraf -r -f ./out",
+    "clean": "npm run clean:build&&npm run clean:out",
     "watch": "webpack --watch --progress",
     "start": "electron-forge start",
-    "prebuild": "webpack --progress --mode=production",
+    "make": "webpack --progress --mode=production",
+    "prebuild": "npm run clean&&npm run make",
     "build": "electron-builder -c electron-builder.json"
   },
   "author": "LiveGobe & Padreramnt",
@@ -28,6 +50,7 @@
     "jszip": "^3.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "rimraf": "^5.0.6",
     "ts-loader": "^9.5.1",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",

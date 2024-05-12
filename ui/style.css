@@ -2,12 +2,28 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: Roboto;
+    src: url('./font/Roboto.ttf');
+}
+
 body,
 html {
     margin: 0;
     padding: 0;
     user-select: none;
-    color: rgba(0, 0, 0, .87);
+    color: rgba(255, 255, 255, .87);
+    font-family: Roboto;
+    font-size: 14px;
+}
+
+body {
+    background-color: black;
+    background-image:
+        radial-gradient(circle at 4px, rgba(255, 255, 255, .2), transparent 2px);
+    background-repeat: space;
+    background-size: 8px 8px;
+    background-attachment: fixed;
 }
 
 .main-header {
@@ -18,11 +34,12 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 4rem;
+    height: 90px;
     padding: 0 1rem;
     gap: 2rem;
-    background: whitesmoke;
-    box-shadow: 0 0 .5rem 0 rgba(0, 0, 0, 0.4);
+    background: var(--widget-background-bottom), var(--widget-background-color);
+    border-bottom: .75px solid var(--color-alt5);
+    box-shadow: 0 0 2px 0 var(--color-alt5);
     z-index: 1;
 
     & .actions {
@@ -33,24 +50,114 @@ html {
 }
 
 .main-content {
-    margin-top: 5rem;
+    margin-top: calc(90px + 1rem);
     padding: 0 1rem;
-    min-height: calc(100vh - 5rem);
+    min-height: calc(100vh - calc(90px + 1rem));
     position: relative;
     padding-bottom: 6rem;
 }
 
+@property --widget-background-top {
+    syntax: "<bg-layer>";
+    inherits: true;
+    initial-value: black;
+}
+
+@property --widget-background-bottom {
+    syntax: "<bg-layer>";
+    inherits: true;
+    initial-value: black;
+}
+
+
+.widget {
+    background:
+        var(--widget-background-top),
+        var(--widget-background-bottom),
+        var(--widget-background-color);
+    border: .75px solid var(--color-alt5);
+    border-radius: 2px;
+    box-shadow: 0 0 2px 0 var(--color-alt5);
+}
+
+:root {
+    --widget-background-color: #000000B4;
+    --widget-background-gradient-color-opaque: hsla(197, 100%, 25%, 0.627);
+    --widget-background-gradient-color-non-opaque: hsla(197, 100%, 25%, 0);
+    --widget-background-gradient-opacity: .65;
+    --widget-background-top--image: linear-gradient(to bottom,
+            color-mix(in srgb, var(--widget-background-gradient-color-opaque) calc(var(--widget-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--widget-background-gradient-color-non-opaque) calc(var(--widget-background-gradient-opacity) * 100%), transparent) 33%);
+    --widget-background-bottom--image: linear-gradient(to top,
+            color-mix(in srgb, var(--widget-background-gradient-color-opaque) calc(var(--widget-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--widget-background-gradient-color-non-opaque) calc(var(--widget-background-gradient-opacity) * 100%), transparent) 33%);
+    --widget-background-top--height: 50px;
+    --widget-background-top: top left/100% var(--widget-background-top--height) var(--widget-background-top--image) no-repeat;
+    --widget-background-bottom--height: 50px;
+    --widget-background-bottom: bottom left/100% var(--widget-background-bottom--height) var(--widget-background-bottom--image) no-repeat;
+}
+
+:root {
+
+    --color-0: hsl(44, 100%, 14%);
+    --color-1: hsl(43, 100%, 17%);
+    --color-2: #7F5C00FF;
+    --color-3: hsl(44, 100%, 30%);
+    --color-4: hsl(44, 100%, 33%);
+    --color-5: hsl(44, 100%, 40%);
+    --color-6: #FFBC0AFF;
+    --color-7: #FFDC80FF;
+
+    --color-alt0: hsl(196, 100%, 14%);
+    --color-alt1: hsl(197, 100%, 17%);
+    --color-alt2: hsl(197, 100%, 25%);
+    --color-alt3: hsl(196, 100%, 30%);
+    --color-alt4: hsl(196, 100%, 33%);
+    --color-alt5: hsl(196, 100%, 40%);
+    --color-alt6: hsl(196, 100%, 52%);
+    --color-alt7: hsl(197, 100%, 75%);
+
+    --color-red0: #470512FF;
+    --color-red1: #570716FF;
+    --color-red2: #7F0A20FF;
+    --color-red3: #990C26FF;
+    --color-red4: #A80D2AFF;
+    --color-red5: #CC0F33FF;
+    --color-red6: #EE123BFF;
+    --color-red7: #FF143BFF;
+
+    --color-green0: #053617FF;
+    --color-green1: #06451EFF;
+    --color-green2: #0A6E30FF;
+    --color-green3: #0C873BFF;
+    --color-green4: #0E9642FF;
+    --color-green5: #11BA52FF;
+    --color-green6: #14DB60FF;
+    --color-green7: #15EE6AFF;
+
+    --color-label-foreground: white;
+    --color-alt-label-foreground: #99DCFFFF;
+}
+
 .main-footer {
+    --tint: .7;
+    --q: color-mix(in srgb, rgba(10, 188, 255) 40%, black);
+    --w: #A8007AFF;
+    --w: #FF0ABCFF;
+    --w: #0094CCFF;
     display: flex;
     place-content: center;
     place-items: center;
     position: absolute;
-    height: 4rem;
+    height: 80px;
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
-    background: color-mix(in srgb, black 10%, white 100%);
+    color: #999999;
+    background: var(--widget-background-top), var(--widget-background-color);
+    border-top: .75px solid var(--color-alt5);
+    box-shadow: 0 0 2px 0 var(--color-alt5);
 }
 
 #mods-view {
@@ -225,7 +332,7 @@ dialog::backdrop {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
 
     &:empty {
         display: none;
@@ -263,7 +370,7 @@ dialog::backdrop {
             visibility: hidden;
         }
     }
-    
+
     & .header {
         background: white;
         position: fixed;
@@ -296,7 +403,7 @@ dialog::backdrop {
             width: calc(100% - 2rem);
         }
 
-        & > * {
+        &>* {
             position: relative;
             z-index: 1;
         }

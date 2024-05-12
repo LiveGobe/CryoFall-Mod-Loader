@@ -1,5 +1,28 @@
 {
     "productName": "CryoFall Mod Loader",
+    "appId": "com.electron.cryofall-mod-loader",
+    "removePackageScripts": true,
+    "directories": {
+        "output": "out",
+        "buildResources": "build"
+    },
+    "files": [
+        "package.json",
+        {
+            "from": "build",
+            "to": "build",
+            "filter": [
+                "**/*"
+            ]
+        },
+        {
+            "from": "ui",
+            "to": "ui",
+            "filter": [
+                "**/*"
+            ]
+        }
+    ],
     "win": {
         "target": [
             {

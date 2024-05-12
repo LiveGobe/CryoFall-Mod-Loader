@@ -1,59 +1,64 @@
-button,
-.button {
+:root {
+    --button-border-color: var(--color-alt5);
+    --button-background-color: #000000B4;
+    --button-background-gradient-color-opaque: hsla(197, 100%, 40%, 0.627);
+    --button-background-gradient-color-non-opaque: hsla(197, 100%, 40%, 0);
+    --button-background-gradient-opacity: .65;
+}
+
+.button,
+button {
     all: unset;
-    height: var(--control--height, 2.5rem);
-    line-height: var(--control--height, 2.5rem);
-    padding-left: var(--control--padding-left, var(--control--padding, 1rem));
-    padding-right: var(--control--padding-right, var(--control--padding, 1rem));
-    background: #C5CBE9;
-    color: rgba(0, 0, 0, 0.87);
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 .25rem 0 color-mix(in srgb, #C5CBE9 40%, white);
+
+    --button-background-top--image: linear-gradient(to bottom,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-bottom--image: linear-gradient(to top,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-top--height: 25px;
+    --button-background-bottom--height: 25px;
+    --button-background-top: top left/100% var(--button-background-top--height) var(--button-background-top--image) no-repeat;
+    --button-background-bottom: bottom left/100% var(--button-background-bottom--height) var(--button-background-bottom--image) no-repeat;
+
     cursor: pointer;
-    display: flex;
-    align-items: center;
+    box-sizing: border-box;
+    height: 40px;
+    display: inline-grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr;
+    place-content: center;
+    place-items: center;
+    padding: 0 10px;
+
+    background:
+        var(--button-background-top),
+        var(--button-background-bottom),
+        var(--button-background-color);
+    border: .75px solid var(--button-border-color);
+    border-radius: 4px;
+    box-shadow: 0 0 2px 0 var(--button-border-color);
+
+    & .icon {
+        display: flex;
+        width: 20px;
+        height: 20px;
+    }
 
     & .title {
         grid-row: 1;
         grid-column: title;
     }
 
-    &:has(.title) {
-        display: grid;
-        grid-template-columns: [title];
-        grid-template-rows: auto;
-    }
-
-    &:has(.icon):not(:has(.title)) {
-        place-content: center;
-        place-items: center;
-        width: var(--control--height, 2.5rem);
-        padding: 0;
-    }
-
-    & .icon {
-        height: var(--control_icon--height, var(--control_icon--size, 1.5rem));
-        width: var(--control_icon--width, var(--control_icon--size, 1.5rem));
-    }
-
-    &.primary {
-        background: #29379D;
-        color: rgba(255, 255, 255, 0.87);
-        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-        box-shadow: 0 0 .25rem 0 color-mix(in srgb, #29379D 40%, white);
-    }
-
-    &.danger {
-        background: #7c0000;
-        color: rgba(255, 255, 255, 0.87);
-        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-        box-shadow: 0 0 .25rem 0 color-mix(in srgb, #7c0000 40%, white);
+    &:hover {
+        --button-border-color: var(--color-5);
+        --button-background-gradient-color-opaque: hsla(44, 100%, 40%, 0.627);
+        --button-background-gradient-color-non-opaque: hsla(44, 100%, 40%, 0);
     }
 
     &.disabled,
-    &:disabled,
-    &[disabled] {
-        background: color-mix(in srgb, grey 20%, whitesmoke);
+    &[disabled],
+    &:disabled {
         cursor: default;
     }
 }

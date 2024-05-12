@@ -33,10 +33,14 @@ async function getDefaultDirs() {
     } as const
 }
 
+function getAppPath() {
+    return process.env.PORTABLE_EXECUTABLE_DIR || app.getAppPath()
+}
+
 export const Config = {
     async load(): Promise<CryoFallModLoader.Result<CryoFallModLoader.Config.ConfigData>> {
         try {
-            const fileName = pathResolve(app.getAppPath(), 'config.json')
+            const fileName = pathResolve(getAppPath(), 'config.json')
             const exists = await isFile(fileName)
             let payload: CryoFallModLoader.Config.ConfigData | undefined
             if (exists) {
@@ -78,7 +82,7 @@ export const Config = {
         }
     },
     async save(data: CryoFallModLoader.Config.ConfigData) {
-        const fileName = pathResolve(app.getAppPath(), 'config.json')
+        const fileName = pathResolve(getAppPath(), 'config.json')
         try {
             await fsWriteFile(fileName, JSON.stringify(data, null, 2))
             return {

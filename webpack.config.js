@@ -28,12 +28,6 @@ exports.default = [
         output: {
             filename: 'client.js',
             path: path.resolve(__dirname, 'build'),
-            asyncChunks: true,
-            chunkFilename: '[name].[id].js',
-            chunkLoading: 'import',
-            clean: {
-                keep: /^(server|preload)/,
-            },
         },
         plugins: [...optionalPlugins]
     },
@@ -63,16 +57,13 @@ exports.default = [
         output: {
             filename: 'server.js',
             path: path.resolve(__dirname, 'build'),
-            clean: {
-                keep: /^(client|preload)/,
-            },
         },
         plugins: [...optionalPlugins]
     },
     {
         name: 'preload',
         target: 'node',
-        entry: './preload.js',
+        entry: './src/preload.ts',
         devtool: 'source-map',
         mode: 'development',
         module: {
@@ -95,9 +86,6 @@ exports.default = [
         output: {
             filename: 'preload.js',
             path: path.resolve(__dirname, 'build'),
-            clean: {
-                keep: /^(client|server)/,
-            },
         },
         plugins: [...optionalPlugins]
     }
