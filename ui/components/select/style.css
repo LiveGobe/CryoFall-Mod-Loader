@@ -1,81 +1,110 @@
 .select {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
+    all: unset;
+
+    --button-background-top--image: linear-gradient(to bottom,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-bottom--image: linear-gradient(to top,
+            color-mix(in srgb, var(--button-background-gradient-color-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent),
+            color-mix(in srgb, var(--button-background-gradient-color-non-opaque) calc(var(--button-background-gradient-opacity) * 100%), transparent) 33%);
+    --button-background-top--height: 25px;
+    --button-background-bottom--height: 25px;
+    --button-background-top: top left/100% var(--button-background-top--height) var(--button-background-top--image) no-repeat;
+    --button-background-bottom: bottom left/100% var(--button-background-bottom--height) var(--button-background-bottom--image) no-repeat;
+
+    cursor: pointer;
+    box-sizing: border-box;
+    display: inline-grid;
     grid-template-rows: 1fr;
-    overflow: visible;
-    background: whitesmoke;
-
-    & .icon {
-        height: var(--select_icon--height, var(--select_icon--size, .75rem));
-        width: var(--select_icon--width, var(--select_icon--size, .75rem));
-        position: absolute;
-        top: calc((100% - var(--select_icon--height)) / 2);
-        right: .5rem;
-        pointer-events: none;
-    }
-
-    & .title {
-        grid-column: 1 / 1;
-        grid-row: 1 / 1;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        height: var(--control--height, 2.5rem);
-        line-height: var(--control--height, 2.5rem);
-        padding: 0;
-        padding-left: var(--control--padding-left, var(--control--padding, 1rem));
-        padding-right: calc(var(--control--padding-right, var(--control--padding, 1rem)) + var(--select_icon--width, var(--select_icon--size, 1.5rem)));
-        cursor: pointer;
-        background: transparent;
-        box-shadow: 0 0 .25rem 0 rgba(0, 0, 0, 0.4);
-    }
+    gap: 10px;
+    background:
+        var(--button-background-top),
+        var(--button-background-bottom),
+        var(--button-background-color);
+    border: .75px solid var(--button-border-color);
+    border-radius: 4px;
+    box-shadow: 0 0 2px 0 var(--button-border-color);
+    position: relative;
 
     & input {
-        display: none;
-    }
+        display: none !important;
 
-    & .options {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        top: 100%;
-        left: 0;
-        display: flex;
-        flex-direction: column;
-        min-width: 100%;
-        box-shadow: 0 0 .125rem 0 rgba(0, 0, 0, 0.4);
-        background: color-mix(in srgb, whitesmoke 30%, white);
-        z-index: 2;
-
-        & .option {
-            height: var(--control--height, 2.5rem);
-            line-height: var(--control--height, 2.5rem);
-            padding: 0;
-            padding-left: var(--control--padding-left, var(--control--padding, 1rem));
-            padding-right: calc(var(--control--padding-right, var(--control--padding, 1rem)) + var(--select_icon--width, var(--select_icon--size, 1.5rem)));
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            cursor: pointer;
+        &:not(:checked)+.title {
+            visibility: hidden;
         }
     }
 
-    & input:nth-of-type(1):checked~.options :nth-child(1) .option,
-    & input:nth-of-type(2):checked~.options :nth-child(2) .option,
-    & input:nth-of-type(3):checked~.options :nth-child(3) .option,
-    & input:nth-of-type(4):checked~.options :nth-child(4) .option,
-    & input:nth-of-type(5):checked~.options :nth-child(5) .option {
-        background: #C5CBE9;
-        color: rgba(0, 0, 0, .87);
+    & .title {
+        display: inline-flex;
+        align-items: center;
+        justify-content: start;
+        height: 40px;
+        padding: 0 10px;
+        padding-right: 40px;
+        grid-row: 1;
+        grid-column: 1;
     }
 
-    & input:not(:checked)+.title {
-        visibility: hidden;
+    & .icon {
+        top: 10px;
+        right: 10px;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
     }
 
-    & .open:not(:checked)+.options {
-        display: none !important;
+    & .options {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: calc(100% + 2px);
+        min-width: 100%;
+        gap: 1px;
+        padding: 2px;
+        background: var(--color-alt1);
+        border: 1px solid var(--color-alt5);
+    }
+
+    & option,
+    & .option {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: start;
+        height: 32px;
+        box-sizing: border-box;
+        padding: 0 8px;
+        background-clip: padding-box;
+
+        &.selected {
+            background-color: var(--color-alt3);
+        }
+
+        &:hover {
+            background-color: color-mix(in srgb, var(--color-5) calc(var(--button-background-gradient-opacity) * 100%), transparent);
+            outline: 1px solid var(--color-5);
+        }
+    }
+
+    & .select-switch:not(:checked) ~.options {
+        display: none;
+    }
+
+    & input:nth-of-type(1):checked~.options .option:nth-of-type(1),
+    & input:nth-of-type(1):not(:checked)~.options .option:nth-of-type(1)+.option {
+        display: none;
+    }
+    & input:nth-of-type(2):checked~.options .option:nth-of-type(3),
+    & input:nth-of-type(2):not(:checked)~.options .option:nth-of-type(3)+.option {
+        display: none;
+    }
+    & input:nth-of-type(3):checked~.options .option:nth-of-type(5),
+    & input:nth-of-type(3):not(:checked)~.options .option:nth-of-type(5)+.option {
+        display: none;
     }
 }

@@ -25,8 +25,9 @@
                 <div class="actions">
                     <label class="status-switch button" style="flex-direction: column;" role="button">
                         <i class="icon checkbox checked">
-                            <svg width="100%" height="100%">
-
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <path d="M4 11 L9 17  L19 4" />
                             </svg>
                         </i>
                         <span class="status-switch title disabled">enable</span>
@@ -63,36 +64,39 @@
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 10 L12 20 L22 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <input id="launch-type-client" name="launch-type-switch" type="radio" value="client" checked />
-            <label class="title" for="_launch-type">
+            <input id="launch-type-client-option" name="launch-type-select" type="radio" value="client" checked />
+            <label class="title" for="launch-type-select">
                 client
             </label>
-            <input id="launch-type-server" name="launch-type-switch" type="radio" value="server" />
-            <label class="title" for="_launch-type">
+            <input id="launch-type-server-option" name="launch-type-select" type="radio" value="server" />
+            <label class="title" for="launch-type-select">
                 server
             </label>
-            <input id="launch-type-editor" name="launch-type-switch" type="radio" value="editor" />
-            <label class="title" for="_launch-type">
+            <input id="launch-type-editor-option" name="launch-type-select" type="radio" value="editor" />
+            <label class="title" for="launch-type-select">
                 editor
             </label>
-            <input type="checkbox" id="_launch-type" class="select open" />
-            <ul class="options">
-                <li>
-                    <label class="option" for="launch-type-client">
-                        client
-                    </label>
-                </li>
-                <li>
-                    <label class="option" for="launch-type-server">
-                        server
-                    </label>
-                </li>
-                <li>
-                    <label class="option" for="launch-type-editor">
-                        editor
-                    </label>
-                </li>
-            </ul>
+            <input type="checkbox" id="launch-type-select" class="select-switch" />
+            <div class="options">
+                <label class="option" for="launch-type-client-option">
+                    client
+                </label>
+                <label class="option selected" for="launch-type-select">
+                    client
+                </label>
+                <label class="option" for="launch-type-server-option">
+                    server
+                </label>
+                <label class="option selected" for="launch-type-select">
+                    server
+                </label>
+                <label class="option" for="launch-type-editor-option">
+                    editor
+                </label>
+                <label class="option selected" for="launch-type-select">
+                    editor
+                </label>
+            </div>
         </div>
         <label class="field search">
             <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

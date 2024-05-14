@@ -51,25 +51,25 @@ declare global {
     }
 }
 
-export const launchTypeSwitchClient = getElementById(document, 'launch-type-client', HTMLInputElement)
+export const launchTypeSwitchClient = getElementById(document, 'launch-type-client-option', HTMLInputElement)
 launchTypeSwitchClient.value = CryoFallModLoader.LaunchType.client
 launchTypeSwitchClient.addEventListener('change', launchTypeSelectorClose)
 launchTypeSwitchClient.addEventListener('change', () => {
     LaunchTypeChangeEvent.dispatch(CryoFallModLoader.LaunchType.client)
 })
-export const launchTypeSwitchServer = getElementById(document, 'launch-type-server', HTMLInputElement)
+export const launchTypeSwitchServer = getElementById(document, 'launch-type-server-option', HTMLInputElement)
 launchTypeSwitchServer.value = CryoFallModLoader.LaunchType.server
 launchTypeSwitchServer.addEventListener('change', launchTypeSelectorClose)
 launchTypeSwitchServer.addEventListener('change', () => {
     LaunchTypeChangeEvent.dispatch(CryoFallModLoader.LaunchType.server)
 })
-export const launchTypeSwitchEditor = getElementById(document, 'launch-type-editor', HTMLInputElement)
+export const launchTypeSwitchEditor = getElementById(document, 'launch-type-editor-option', HTMLInputElement)
 launchTypeSwitchEditor.value = CryoFallModLoader.LaunchType.editor
 launchTypeSwitchEditor.addEventListener('change', launchTypeSelectorClose)
 launchTypeSwitchEditor.addEventListener('change', () => {
     LaunchTypeChangeEvent.dispatch(CryoFallModLoader.LaunchType.editor)
 })
-export const launchTypeSwitchOpen = getElementById(document, '_launch-type', HTMLInputElement)
+export const launchTypeSwitchOpen = getElementById(document, 'launch-type-select', HTMLInputElement)
 function launchTypeSelectorClose() {
     launchTypeSwitchOpen.checked = false
 }
